@@ -34,6 +34,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import useStore from "@/store/store";
 import Router from "next/router";
+import { Checkbox } from "../ui/checkbox";
 // import { toast } from "@/components/ui/use-toast"
 
 const Room = [
@@ -47,18 +48,48 @@ const Room = [
   },
 ] as const;
 
-const RoomFormSchema = z.object({
-  date: z.object({
-    from: z.date(),
-    to: z.date(),
-  }),
-  room: z.string().refine((value) => value !== "", {
-    message: "Please select a room.",
-  }),
-  adult: z.string(),
-  children: z.string(),
-  childrenAge: z.array(z.string()),
-});
+const Meal = [
+  {
+    id: "breakfast",
+    label: "Breakfast",
+  },
+  {
+    id: "lunch",
+    label: "Lunch",
+  },
+  {
+    id: "dinner",
+    label: "Dinner",
+  },
+] as const;
+
+const RoomFormSchema = z
+  .object({
+    date: z.object({
+      from: z.date(),
+      to: z.date(),
+    }),
+    room: z.string().refine((value) => value !== "", {
+      message: "Please select a room.",
+    }),
+    adult: z.string(),
+    children: z.string(),
+    childrenAge: z.array(z.string()),
+    meal: z.boolean().default(false).optional(),
+    mealItems: z.array(z.string()).nullable(),
+  })
+  .superRefine((values, ctx) => {
+    if (values.meal === true && values?.mealItems?.length === 0) {
+      ctx.addIssue({
+        message: "Meal selection must be filled in.",
+        code: z.ZodIssueCode.custom,
+        path: ["mealItems"],
+      });
+    }
+    if (values.meal === false) {
+      values.mealItems = [];
+    }
+  });
 
 export function RoomForm() {
   const {
@@ -72,10 +103,8 @@ export function RoomForm() {
 
   const [scheduleCheck, setScheduleCheck] = useState<any>();
   const [daysCheck, setDaysCheck] = useState<number>();
-  const [numberOfRooms, setNumberOfRooms] = useState<string>("");
+  const [includeMeal, setIncludeMeal] = useState<any>(false);
   const [numberOfChildrenAge, setNumberOfChildrenAge] = useState<string>("0");
-
-  const [continueBooking, setContinueBooking] = useState<boolean>(false);
 
   const disabledBeforeDate = new Date();
   disabledBeforeDate.setDate(1);
@@ -87,11 +116,12 @@ export function RoomForm() {
       adult: "1 Adult",
       children: "0",
       childrenAge: ["None"],
+      meal: false,
+      mealItems: [],
     },
   });
 
   function onSubmit(data: z.infer<typeof RoomFormSchema>) {
-    setContinueBooking(true);
     console.log("Data: ", data);
 
     try {
@@ -103,7 +133,7 @@ export function RoomForm() {
         setChildren(data.children);
         setChildrenAge(data.childrenAge);
 
-        Router.push("/reservation/invoice");
+        // Router.push("/reservation/invoice");
       }
     } catch (error) {
       console.error(error);
@@ -120,191 +150,167 @@ export function RoomForm() {
   }, [scheduleCheck]);
   return (
     <Form {...form}>
-      {!continueBooking && (
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full flex justify-between space-x-4"
-        >
-          {/* Form Section */}
-          <section className="space-y-8">
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Date</FormLabel>
-                  <FormControl>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-[300px] justify-start text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {field.value?.from ? (
-                            field.value.to ? (
-                              <>
-                                {format(field.value.from, "LLL dd, y")} -
-                                {format(field.value.to, "LLL dd, y")}
-                              </>
-                            ) : (
-                              format(field.value.from, "LLL dd, y")
-                            )
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full flex justify-between space-x-4"
+      >
+        {/* Form Section */}
+        <section className="space-y-8">
+          {/* Date Stay Input Field */}
+          <FormField
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Date</FormLabel>
+                <FormControl>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[300px] justify-start text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {field.value?.from ? (
+                          field.value.to ? (
+                            <>
+                              {format(field.value.from, "LLL dd, y")} -
+                              {format(field.value.to, "LLL dd, y")}
+                            </>
                           ) : (
-                            <span>Pick a date</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          initialFocus
-                          mode="range"
-                          defaultMonth={field.value?.from}
-                          selected={field.value}
-                          onSelect={(value) => {
-                            field.onChange(value);
-                            setScheduleCheck(value);
-                          }}
-                          numberOfMonths={2}
-                          disabled={(date) => date < disabledBeforeDate}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                            format(field.value.from, "LLL dd, y")
+                          )
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        initialFocus
+                        mode="range"
+                        defaultMonth={field.value?.from}
+                        selected={field.value}
+                        onSelect={(value) => {
+                          field.onChange(value);
+                          setScheduleCheck(value);
+                        }}
+                        numberOfMonths={2}
+                        disabled={(date) => date < disabledBeforeDate}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            {/* Room Input Field */}
-            <FormField
-              control={form.control}
-              name="room"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Room available</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex flex-col space-y-1"
-                    >
-                      {Room.map((item) => (
-                        <FormItem
-                          className="flex items-center space-x-3 space-y-0"
-                          key={item.id}
-                        >
-                          <FormControl>
-                            <RadioGroupItem value={item.id} />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            {item.label}
-                          </FormLabel>
-                        </FormItem>
-                      ))}
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* <FormField
+          {/* Room Input Field */}
+          <FormField
             control={form.control}
             name="room"
             render={({ field }) => (
+              <FormItem className="space-y-3">
+                <FormLabel>Room available</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="flex flex-col space-y-1"
+                  >
+                    {Room.map((item) => (
+                      <FormItem
+                        className="flex items-center space-x-3 space-y-0"
+                        key={item.id}
+                      >
+                        <FormControl>
+                          <RadioGroupItem value={item.id} />
+                        </FormControl>
+                        <FormLabel className="font-normal">
+                          {item.label}
+                        </FormLabel>
+                      </FormItem>
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Adult Input Field */}
+          <FormField
+            control={form.control}
+            name="adult"
+            render={({ field }) => (
               <FormItem>
-                <FormLabel>Rooms</FormLabel>
-                <Select
-                  onValueChange={(value) => {
-                    field.onChange(value);
-                    setNumberOfRooms(value);
-                  }}
-                  defaultValue="1 Room"
-                >
+                <FormLabel>Adults</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue="1 Adult">
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="1 Room" />
+                      <SelectValue placeholder="1 Adult" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="1 Room">1 Room</SelectItem>
-                    <SelectItem value="2 Rooms">2 Rooms</SelectItem>
-                    <SelectItem value="3 Rooms">3 Rooms</SelectItem>
-                    <SelectItem value="4 Rooms">4 Rooms</SelectItem>
-                    <SelectItem value="5 Rooms">5 Rooms</SelectItem>
+                    {Array.from({ length: 20 }).map((_, i) => (
+                      <SelectItem
+                        key={i + 1}
+                        value={`${i + 1} ${i + 1 === 1 ? "Adult" : "Adults"}`}
+                      >
+                        {i + 1} {i + 1 === 1 ? "Adult" : "Adults"}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
             )}
-          /> */}
+          />
 
-            {/* Adult Input Field */}
-            <FormField
-              control={form.control}
-              name="adult"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Adults</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue="1 Adult">
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="1 Adult" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {Array.from({ length: 20 }).map((_, i) => (
-                        <SelectItem
-                          key={i + 1}
-                          value={`${i + 1} ${i + 1 === 1 ? "Adult" : "Adults"}`}
-                        >
-                          {i + 1} {i + 1 === 1 ? "Adult" : "Adults"}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          {/* Children Input Field */}
+          <FormField
+            control={form.control}
+            name="children"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Children</FormLabel>
+                <Select
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    setNumberOfChildrenAge(value);
+                  }}
+                  defaultValue="0"
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="0" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {Array.from({ length: 16 }).map((_, i) => (
+                      <SelectItem key={i} value={i.toString()}>
+                        {i} {i === 1 ? "Child" : "Children"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            {/* Children Input Field */}
-            <FormField
-              control={form.control}
-              name="children"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Children</FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      setNumberOfChildrenAge(value);
-                    }}
-                    defaultValue="0"
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="0" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {Array.from({ length: 16 }).map((_, i) => (
-                        <SelectItem key={i} value={i.toString()}>
-                          {i} {i === 1 ? "Child" : "Children"}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Children Age Input Field */}
-            <section className="grid grid-cols-4 gap-4">
+          {/* Children Age Input Field */}
+          <section>
+            {parseInt(numberOfChildrenAge) !== 0 && (
+              <h2 className="text-sm font-semibold mb-2.5">
+                Indicate your children ages.
+              </h2>
+            )}
+            <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {Array.from({ length: parseInt(numberOfChildrenAge) }).map(
                 (_, i) => (
                   <FormField
@@ -340,13 +346,96 @@ export function RoomForm() {
                 )
               )}
             </section>
-
-            <Button type="submit">Continue</Button>
           </section>
 
-          {/* <RoomInvoice day={daysCheck} /> */}
-        </form>
-      )}
+          {/* Adds on Input Field */}
+          <section>
+            <h2>Enhance your stay</h2>
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="meal"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={(value) => {
+                          field.onChange(value);
+                          setIncludeMeal(value);
+                        }}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Include meal?</FormLabel>
+                      <FormDescription>
+                        You can manage your meal in your stay.
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              {includeMeal && (
+                <FormField
+                  control={form.control}
+                  name="mealItems"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel className="text-base">Meal</FormLabel>
+                        <FormDescription>
+                          Select the meals you want to include in your stay.
+                        </FormDescription>
+                      </div>
+                      {Meal.map((item) => (
+                        <FormField
+                          key={item.id}
+                          control={form.control}
+                          name="mealItems"
+                          render={({ field }: any) => {
+                            return (
+                              <FormItem
+                                key={item.id}
+                                className="flex flex-row items-start space-x-3 space-y-0"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.includes(item.id)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([
+                                            ...field.value,
+                                            item.id,
+                                          ])
+                                        : field.onChange(
+                                            field.value?.filter(
+                                              (value: string) =>
+                                                value !== item.id
+                                            )
+                                          );
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  {item.label}
+                                </FormLabel>
+                              </FormItem>
+                            );
+                          }}
+                        />
+                      ))}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
+          </section>
+
+          <Button type="submit">Continue</Button>
+        </section>
+      </form>
     </Form>
   );
 }
