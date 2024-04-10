@@ -11,7 +11,7 @@ Download the zip file, then place it to your folder. Where you want to work.
 Second, enter the terminal of your VSCode, then enter this:
 
 ```bash
-    npm install
+npm install
 ```
 
 After that you can enter the directory and run this code here:
