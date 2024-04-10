@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
+import Router from "next/router";
+import useStore from "@/store/store";
+
 import { addDays, format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DateRange } from "react-day-picker";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -18,11 +23,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -30,23 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Input } from "@/components/ui/input";
-import useStore from "@/store/store";
-import Router from "next/router";
-import { Checkbox } from "../ui/checkbox";
 // import { toast } from "@/components/ui/use-toast"
-
-const Room = [
-  {
-    id: "small room",
-    label: "Small Room",
-  },
-  {
-    id: "big room",
-    label: "Big Room",
-  },
-] as const;
 
 const Meal = [
   {
@@ -63,20 +54,37 @@ const Meal = [
   },
 ] as const;
 
+const Transport = [
+  {
+    id: "pickup service",
+    label: "Pick-up Service",
+    info: "This refers to transporting you (our customer) to this desired destination.",
+  },
+  {
+    id: "dropoff service",
+    label: "Drop-off Service",
+    info: "This refers to transporting you (our customer) back to your homes.",
+  },
+  {
+    id: "roundtrip service",
+    label: "Round-trip Service",
+    info: "This refers to providing transportation for you (our customer) from your home to our location (this place) and then back to your home again. It covers both pick-up and drop-off services in a single trip.",
+  },
+] as const;
+
 const RoomFormSchema = z
   .object({
     date: z.object({
       from: z.date(),
       to: z.date(),
     }),
-    room: z.string().refine((value) => value !== "", {
-      message: "Please select a room.",
-    }),
     adult: z.string(),
     children: z.string(),
     childrenAge: z.array(z.string()),
     meal: z.boolean().default(false).optional(),
     mealItems: z.array(z.string()).nullable(),
+    transport: z.boolean().default(false).optional(),
+    transportItems: z.string(),
   })
   .superRefine((values, ctx) => {
     if (values.meal === true && values?.mealItems?.length === 0) {
@@ -89,21 +97,28 @@ const RoomFormSchema = z
     if (values.meal === false) {
       values.mealItems = [];
     }
+    if (values.transport === true && values.transportItems.length === 0) {
+      console.log(values.transportItems);
+
+      ctx.addIssue({
+        message: "Transport service selection must be filled in.",
+        code: z.ZodIssueCode.custom,
+        path: ["transportItems"],
+      });
+    }
+    if (values.transport === false) {
+      values.transportItems = "";
+    }
   });
 
 export function RoomForm() {
-  const {
-    setDate,
-    setDayStay,
-    setRoom,
-    setAdult,
-    setChildren,
-    setChildrenAge,
-  } = useStore();
+  const { setDate, setDayStay, setAdult, setChildren, setChildrenAge } =
+    useStore();
 
   const [scheduleCheck, setScheduleCheck] = useState<any>();
   const [daysCheck, setDaysCheck] = useState<number>();
-  const [includeMeal, setIncludeMeal] = useState<any>(false);
+  const [includeMeal, setIncludeMeal] = useState<boolean>(false);
+  const [includeTransport, setIncludeTransport] = useState<boolean>(false);
   const [numberOfChildrenAge, setNumberOfChildrenAge] = useState<string>("0");
 
   const disabledBeforeDate = new Date();
@@ -112,12 +127,13 @@ export function RoomForm() {
   const form = useForm<z.infer<typeof RoomFormSchema>>({
     resolver: zodResolver(RoomFormSchema),
     defaultValues: {
-      room: "",
       adult: "1 Adult",
       children: "0",
       childrenAge: ["None"],
       meal: false,
       mealItems: [],
+      transport: false,
+      transportItems: "",
     },
   });
 
@@ -128,7 +144,6 @@ export function RoomForm() {
       if (data) {
         setDate(data?.date.from, data?.date.to);
         setDayStay(daysCheck);
-        setRoom(data?.room);
         setAdult(data.adult);
         setChildren(data.children);
         setChildrenAge(data.childrenAge);
@@ -148,6 +163,7 @@ export function RoomForm() {
       setDaysCheck(daysDifference);
     }
   }, [scheduleCheck]);
+
   return (
     <Form {...form}>
       <form
@@ -203,39 +219,6 @@ export function RoomForm() {
                       />
                     </PopoverContent>
                   </Popover>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Room Input Field */}
-          <FormField
-            control={form.control}
-            name="room"
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel>Room available</FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="flex flex-col space-y-1"
-                  >
-                    {Room.map((item) => (
-                      <FormItem
-                        className="flex items-center space-x-3 space-y-0"
-                        key={item.id}
-                      >
-                        <FormControl>
-                          <RadioGroupItem value={item.id} />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          {item.label}
-                        </FormLabel>
-                      </FormItem>
-                    ))}
-                  </RadioGroup>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -350,8 +333,9 @@ export function RoomForm() {
 
           {/* Adds on Input Field */}
           <section>
-            <h2>Enhance your stay</h2>
-            <div className="space-y-4">
+            <h2 className="my-2">Enhance your stay</h2>
+            {/* Meal Inclusion Input Field */}
+            <div className="space-y-4 mb-4">
               <FormField
                 control={form.control}
                 name="meal"
@@ -360,7 +344,7 @@ export function RoomForm() {
                     <FormControl>
                       <Checkbox
                         checked={field.value}
-                        onCheckedChange={(value) => {
+                        onCheckedChange={(value: boolean) => {
                           field.onChange(value);
                           setIncludeMeal(value);
                         }}
@@ -425,6 +409,68 @@ export function RoomForm() {
                           }}
                         />
                       ))}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
+
+            {/* Transport Service Inclusion Input Field */}
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="transport"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={(value: boolean) => {
+                          field.onChange(value);
+                          setIncludeTransport(value);
+                        }}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Transport Service</FormLabel>
+                      <FormDescription>
+                        Less hassle transport service
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              {includeTransport && (
+                <FormField
+                  control={form.control}
+                  name="transportItems"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Service type</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          {Transport.map((item) => (
+                            <FormItem
+                              className="flex items-center space-x-3 space-y-0"
+                              key={item.id}
+                            >
+                              <FormControl>
+                                <RadioGroupItem value={item.id} />
+                              </FormControl>
+                              <div className="space-y-1 leading-none">
+                                <FormLabel>{item.label}</FormLabel>
+                                <FormDescription>{item.info}</FormDescription>
+                              </div>
+                            </FormItem>
+                          ))}
+                        </RadioGroup>
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
