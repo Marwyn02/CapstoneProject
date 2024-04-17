@@ -141,13 +141,15 @@ export function RoomForm() {
   function onSubmit(data: z.infer<typeof RoomFormSchema>) {
     try {
       if (data) {
+        console.log(data);
+
         setDate(data?.date.from, data?.date.to);
         setDayStay(daysCheck);
         setAdult(data.adult);
         setChildren(data.children);
         setChildrenAge(data.childrenAge);
 
-        // Router.push("/reservation/invoice");
+        Router.push("/hotel/reservation/invoice");
       }
     } catch (error) {
       console.error(error);
