@@ -43,8 +43,10 @@ const HomeReserveAvailabilityForm = () => {
 
   const [scrolled, setScrolled] = useState(false);
 
-  // const disabledBeforeDate = new Date();
-  // disabledBeforeDate.setDate(1);
+  const [screenSize, setScreenSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
   // Disable date yesterdays
   const disabledBeforeDate = new Date(
@@ -115,6 +117,21 @@ const HomeReserveAvailabilityForm = () => {
     }
   }, [scheduleCheck]);
 
+  // Screen size detector
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [screenSize]);
+
   // Scroll changes
   useEffect(() => {
     const handleScroll = () => {
@@ -135,9 +152,11 @@ const HomeReserveAvailabilityForm = () => {
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className={
-          scrolled
-            ? "flex justify-around items-start px-2 py-8 bg-white -translate-y-0 duration-700" // scrolled
-            : "flex justify-around items-start px-2 py-8 mx-10 bg-slate-50 shadow-sm -translate-y-14 duration-700" // not scrolled
+          screenSize.width >= 768
+            ? scrolled
+              ? "flex justify-around items-start px-2 py-8 bg-white shadow-sm -translate-y-0 duration-700" // scrolled
+              : "flex justify-around items-start px-2 py-8 mx-10 bg-slate-50 shadow-sm -translate-y-14 duration-700" // not scrolled
+            : "flex-col px-8 py-8 bg-white shadow-sm space-y-5" // mobile view
         }
       >
         <div className="space-y-2">
@@ -200,7 +219,72 @@ const HomeReserveAvailabilityForm = () => {
           />
         </div>
 
-        <div className="space-y-2">
+        {/* Mobile Viewed Adult and Children Counting  */}
+        <section className="grid grid-cols-3 items-center md:hidden">
+          <div className="space-y-2">
+            <p className="text-sm font-semibold tracking-wide">Adults</p>
+            {/* Adult Counting */}
+            <div className="flex items-center gap-x-3">
+              <button
+                type="button"
+                className="border border-black px-2.5 py-0.5"
+                onClick={() => {
+                  if (adultCount < 20) {
+                    setAdultCount(adultCount + 1);
+                  }
+                }}
+              >
+                +
+              </button>
+              <span>{adultCount}</span>
+              <button
+                type="button"
+                className="border border-black px-2.5 py-0.5"
+                onClick={() => {
+                  if (adultCount > 0) {
+                    setAdultCount(adultCount - 1);
+                  }
+                }}
+              >
+                -
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-sm font-semibold tracking-wide">Children</p>
+            {/* Children Counting */}
+            <div className="flex items-center gap-x-3">
+              <button
+                type="button"
+                className="border border-black px-2.5 py-0.5"
+                onClick={() => {
+                  if (childrenCount < 20) {
+                    setChildrenCount(childrenCount + 1);
+                  }
+                }}
+              >
+                +
+              </button>
+              <span>{childrenCount}</span>
+              <button
+                type="button"
+                className="border border-black px-2.5 py-0.5"
+                onClick={() => {
+                  if (childrenCount > 0) {
+                    setChildrenCount(childrenCount - 1);
+                  }
+                }}
+              >
+                -
+              </button>
+            </div>
+          </div>
+          <div></div>
+        </section>
+
+        {/* Desktop view  */}
+        <div className="space-y-2 hidden md:block">
           <p className="text-sm font-semibold tracking-wide">Adults</p>
           {/* Adult Counting */}
           <div className="flex items-center gap-x-3">
@@ -230,7 +314,7 @@ const HomeReserveAvailabilityForm = () => {
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 hidden md:block">
           <p className="text-sm font-semibold tracking-wide">Children</p>
           {/* Children Counting */}
           <div className="flex items-center gap-x-3">
@@ -260,10 +344,10 @@ const HomeReserveAvailabilityForm = () => {
           </div>
         </div>
 
-        <div className="grid place-self-center">
+        <div className="md:grid md:place-self-center">
           <Button
             type="submit"
-            className="border border-slate-800 px-8 py-3.5 rounded-none bg-transparent text-xs font-semibold tracking-wide text-[#2A3242] hover:bg-[#2A3242] hover:text-slate-100 duration-300"
+            className="w-full md:w-auto mt-2.5 md:mt-0 border border-slate-800 px-8 py-3.5 rounded-none bg-transparent text-xs font-semibold tracking-wide text-[#2A3242] hover:bg-[#2A3242] hover:text-slate-100 duration-300"
             disabled={loading}
           >
             Check availability
