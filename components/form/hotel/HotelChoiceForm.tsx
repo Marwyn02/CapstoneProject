@@ -4,107 +4,77 @@ import React, { useState } from "react";
 import Router from "next/router";
 import useStore from "@/store/store";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
 
-const formSchema = z.object({
-  place: z.string(),
-});
+const data = [
+  {
+    id: 1,
+    title: "1 Bedroom Villa",
+    description:
+      "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas beatae facere excepturi asperiores, possimus recusandae nam autem libero ipsam voluptates quidem saepe ea unde eius accusamus pariatur doloremque voluptas voluptatem!",
+    image: "/hotel_header.jpg",
+  },
+  {
+    id: 2,
+    title: "2 Bedroom Villa",
+    description:
+      "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas beatae facere excepturi asperiores, possimus recusandae nam autem libero ipsam voluptates quidem saepe ea unde eius accusamus pariatur doloremque voluptas voluptatem!",
+    image: "/hotel-1.jpg",
+  },
+];
 
 export function HotelChoiceForm() {
-  const { setPlace } = useStore();
+  // const { setPlace } = useStore();
 
-  const [placeClicked, setPlaceClicked] = useState<string | null>(null);
+  // const [placeClicked, setPlaceClicked] = useState<string | null>(null);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      place: "",
-    },
-  });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      setPlace(values.place);
-      Router.push("/hotel/reservation");
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  // function onSubmit(values: z.infer<typeof formSchema>) {
+  //   try {
+  //     setPlace(values.place);
+  //     Router.push("/hotel/reservation");
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-10">
-        <FormField
-          control={form.control}
-          name="place"
-          render={({ field }) => (
-            <FormItem className="space-y-8">
-              <FormLabel>Choose where would you like.</FormLabel>
-              <FormControl className="my-2">
-                <RadioGroup
-                  onValueChange={(value) => {
-                    field.onChange(value);
-                    setPlaceClicked(value);
-                  }}
-                  defaultValue={field.value}
-                  className="flex flex-row space-3"
+    <section className="overflow-x-auto snap-x snap-center snap-mandatory flex flex-nowrap">
+      <div className="flex flex-row">
+        {data.map((d) => (
+          <section
+            key={d.id}
+            className="relative flex-none snap-start w-screen h-screen grid grid-cols-3 items-center gap-x-6 py-8"
+          >
+            <p className="absolute text-4xl font-serif text-white z-40 top-28 left-12 border-b pb-5 w-2/5">
+              Our selection of rooms
+            </p>
+            <div className="h-screen z-30 flex justify-center items-center bg-gradient-to-r from-black/75 to-transparent px-12 text-slate-200 -mt-8">
+              <div className="space-y-4">
+                <h2 className="text-4xl">{d.title}</h2>
+                <p>{d.description}</p>
+                <button
+                  type="button"
+                  className="border border-black text-sm px-5 py-2"
                 >
-                  <FormItem
-                    className={`flex items-center space-y-0 rounded-md border ${
-                      placeClicked === "La Union Staycation Resort"
-                        ? "border-indigo-500 border-4"
-                        : "border-4 border-transparent"
-                    }`}
-                  >
-                    <FormControl className="hidden">
-                      <RadioGroupItem value="La Union Staycation Resort" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      <Image
-                        src="/RoomImage.webp"
-                        height={150}
-                        width={150}
-                        alt="Image"
-                      />
-                    </FormLabel>
-                  </FormItem>
-                  <FormItem
-                    className={`flex items-center space-x-3 space-y-0 rounded-md border ${
-                      placeClicked === "Batangas Beach Resort"
-                        ? "border-indigo-500"
-                        : ""
-                    }`}
-                  >
-                    <FormControl>
-                      <RadioGroupItem value="Batangas Beach Resort" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      Batangas Beach Resort
-                    </FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  Book
+                </button>
+              </div>
+            </div>
 
-        <Button type="submit">Continue</Button>
-      </form>
-    </Form>
+            <Image
+              src={d.image}
+              height={1050}
+              width={1050}
+              alt="Image"
+              className="w-screen h-screen absolute brightness-75"
+            />
+          </section>
+        ))}
+      </div>
+    </section>
   );
 }
+
+("La Union Staycation Resort");
+
+("Batangas Beach Resort");

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 interface AppState {
+  place: string;
   date: {
     from: any;
     to: any;
@@ -13,6 +14,7 @@ interface AppState {
 }
 
 interface AppActions {
+  setPlace: (place: string) => void;
   setDate: (from: any, to: any) => void;
   setDayStay: (dayStay: number | undefined) => void;
   setRoom: (room: string) => void;
@@ -22,6 +24,7 @@ interface AppActions {
 }
 
 const useStore = create<AppState & AppActions>((set) => ({
+  place: "",
   date: {
     from: "",
     to: "",
@@ -32,6 +35,7 @@ const useStore = create<AppState & AppActions>((set) => ({
   children: "",
   childrenAge: [],
 
+  setPlace: (place) => set((state) => ({ place })),
   setDate: (from, to) => set((state) => ({ date: { from, to } })),
   setDayStay: (dayStay) => set((state) => ({ dayStay })),
   setRoom: (room) => set((state) => ({ room })),

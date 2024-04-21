@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import Router from "next/router";
 import useStore from "@/store/store";
 
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { DateRange } from "react-day-picker";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -23,7 +22,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -98,8 +96,6 @@ const RoomFormSchema = z
       values.mealItems = [];
     }
     if (values.transport === true && values.transportItems.length === 0) {
-      console.log(values.transportItems);
-
       ctx.addIssue({
         message: "Transport service selection must be filled in.",
         code: z.ZodIssueCode.custom,
@@ -112,7 +108,7 @@ const RoomFormSchema = z
   });
 
 export function RoomForm() {
-  const { setDate, setDayStay, setAdult, setChildren, setChildrenAge } =
+  const { setDate, setDayStay, setAdult, setChildren, setChildrenAge, place } =
     useStore();
 
   const [scheduleCheck, setScheduleCheck] = useState<any>();
@@ -121,8 +117,13 @@ export function RoomForm() {
   const [includeTransport, setIncludeTransport] = useState<boolean>(false);
   const [numberOfChildrenAge, setNumberOfChildrenAge] = useState<string>("0");
 
-  const disabledBeforeDate = new Date();
-  disabledBeforeDate.setDate(1);
+  // Disable date yesterdays
+  const disabledBeforeDate = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    new Date().getDate() - 1,
+    1
+  );
 
   const form = useForm<z.infer<typeof RoomFormSchema>>({
     resolver: zodResolver(RoomFormSchema),
@@ -138,17 +139,17 @@ export function RoomForm() {
   });
 
   function onSubmit(data: z.infer<typeof RoomFormSchema>) {
-    console.log("Data: ", data);
-
     try {
       if (data) {
+        console.log(data);
+
         setDate(data?.date.from, data?.date.to);
         setDayStay(daysCheck);
         setAdult(data.adult);
         setChildren(data.children);
         setChildrenAge(data.childrenAge);
 
-        // Router.push("/reservation/invoice");
+        Router.push("/hotel/reservation/invoice");
       }
     } catch (error) {
       console.error(error);
@@ -173,6 +174,7 @@ export function RoomForm() {
         {/* Form Section */}
         <section className="space-y-8">
           {/* Date Stay Input Field */}
+          <h2>This is from {place}.</h2>
           <FormField
             control={form.control}
             name="date"
