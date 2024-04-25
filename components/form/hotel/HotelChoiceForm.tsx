@@ -48,16 +48,16 @@ export function HotelChoiceForm() {
             <p className="absolute text-4xl font-serif text-white z-40 top-28 left-12 border-b pb-5 w-2/5">
               Our selection of rooms
             </p>
-            <div className="h-screen z-30 flex justify-center items-center bg-gradient-to-r from-black/75 to-transparent px-12 text-slate-200 -mt-8">
+            <div className="h-screen z-20 flex justify-end items-end pb-10 bg-gradient-to-r from-black/75 to-transparent px-12 text-slate-200 -mt-8">
               <div className="space-y-4">
                 <h2 className="text-4xl">{d.title}</h2>
                 <p>{d.description}</p>
-                <button
+                {/* <button
                   type="button"
                   className="border border-black text-sm px-5 py-2"
                 >
                   Book
-                </button>
+                </button> */}
               </div>
             </div>
 
