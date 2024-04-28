@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import Router from "next/router";
+
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -21,7 +23,11 @@ import { format } from "date-fns";
 import { z } from "zod";
 
 import { CalendarIcon } from "lucide-react";
-import Router from "next/router";
+
+type ScreenProps = {
+  width: number;
+  height: number;
+};
 
 const HomeReserveAvailabiltySchema = z.object({
   date: z.object({
@@ -41,12 +47,12 @@ const HomeReserveAvailabilityForm = () => {
   const [adultCount, setAdultCount] = useState<number>(0);
   const [childrenCount, setChildrenCount] = useState<number>(0);
 
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState<boolean>(false);
 
-  const [screenSize, setScreenSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
+  const [screenSize, setScreenSize] = useState<ScreenProps>(() => ({
+    width: 0,
+    height: 0,
+  }));
 
   // Disable date yesterdays
   const disabledBeforeDate = new Date(
@@ -125,12 +131,14 @@ const HomeReserveAvailabilityForm = () => {
         height: window.innerHeight,
       });
     };
-
-    window.addEventListener("resize", handleResize);
+    setTimeout(() => {
+      handleResize();
+      window.addEventListener("resize", handleResize);
+    }, 0);
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [screenSize]);
+  }, []);
 
   // Scroll changes
   useEffect(() => {
