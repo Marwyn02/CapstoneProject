@@ -8,6 +8,7 @@ interface AppState {
   };
   dayStay: number | undefined;
   room: string;
+  roomPrice: number;
   adult: string;
   children: string;
   childrenAge: string[];
@@ -18,6 +19,7 @@ interface AppActions {
   setDate: (from: any, to: any) => void;
   setDayStay: (dayStay: number | undefined) => void;
   setRoom: (room: string) => void;
+  setRoomPrice: (roomPrice: number) => void;
   setAdult: (adult: string) => void;
   setChildren: (children: string) => void;
   setChildrenAge: (childrenAge: string[]) => void;
@@ -31,7 +33,8 @@ const useStore = create<AppState & AppActions>((set) => ({
   },
   dayStay: 0,
   room: "",
-  adult: "",
+  roomPrice: 0,
+  adult: "2 Adults",
   children: "",
   childrenAge: [],
 
@@ -39,6 +42,7 @@ const useStore = create<AppState & AppActions>((set) => ({
   setDate: (from, to) => set((state) => ({ date: { from, to } })),
   setDayStay: (dayStay) => set((state) => ({ dayStay })),
   setRoom: (room) => set((state) => ({ room })),
+  setRoomPrice: (roomPrice) => set((state) => ({ roomPrice })),
   setAdult: (adult) => set((state) => ({ adult })),
   setChildren: (children) => set((state) => ({ children })),
   setChildrenAge: (childrenAge) => set((state) => ({ childrenAge })),
