@@ -11,21 +11,20 @@ import HomeRooms from "../home/HomeRooms";
 
 const MainLayout = () => {
   return (
-    <main className="relative bg-white scroll-smooth">
+    <section className="relative bg-white scroll-smooth">
+      <MainNavBar className="fixed z-10 text-[#9da6b7]" />
       <HomeLandingPage />
+
       <div className="h-auto w-full relative">
         <HomeReserveAvailabilityForm />
       </div>
+
       <HomeIntro />
-
       <HomeRooms />
-
       <HomeMap />
-
       <HomePromotion />
-
       <FooterNav />
-    </main>
+    </section>
   );
 };
 
