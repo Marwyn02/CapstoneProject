@@ -1,143 +1,157 @@
 import React from "react";
 
-import Router from "next/router";
+import Image from "next/image";
+import Autoplay from "embla-carousel-autoplay";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
-import { HotelChoiceForm } from "../form/hotel/HotelChoiceForm";
-
-const data = [
+const rooms = [
   {
     id: 1,
-    title: "Address",
-    address: "Just a random address in the Philippines.",
+    title: "1 Bedroom Villa",
+    description:
+      "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas beatae facere excepturi asperiores, possimus recusandae nam autem libero ipsam voluptates quidem saepe ea unde eius accusamus pariatur doloremque voluptas voluptatem!",
+    image: "/hotel_header.jpg",
   },
   {
     id: 2,
-    title: "Check-in / Check-out",
-    description: "2 pm",
-    subDescription: "11 am",
-  },
-  {
-    id: 3,
-    title: "Rooms",
-    description: "Just a random address in the Philippines.",
-  },
-  {
-    id: 4,
-    title: "Available services",
-    services: [
-      {
-        id: 1,
-        service: "Laundry service",
-      },
-    ],
-  },
-  {
-    id: 5,
-    title: "Internet",
-    description: "Free",
-  },
-  {
-    id: 6,
-    title: "Transportation",
-    description: "Subject to supplement",
-  },
-  {
-    id: 8,
-    title: "Smoking policy",
-    description: "No smoking",
-  },
-  {
-    id: 9,
-    title: "Children policy",
-    description: "Children are welcome",
-  },
-  {
-    id: 10,
-    title: "Pets",
-    description: "Pets are allowed",
+    title: "2 Bedroom Villa",
+    description:
+      "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas beatae facere excepturi asperiores, possimus recusandae nam autem libero ipsam voluptates quidem saepe ea unde eius accusamus pariatur doloremque voluptas voluptatem!",
+    image: "/hotel-1.jpg",
   },
 ];
 
 const HomeRooms = () => {
+  const plugin = React.useRef(
+    Autoplay({ delay: 2000, stopOnInteraction: true })
+  );
   return (
-    <section className="mt-32 mb-5">
-      <HotelChoiceForm />
-
-      <div className="h-full flex-nowrap px-64">
-        <section className="flex flex-col">
-          <div className="px-10 py-20 space-y-10 grid">
-            <h3 className="text-3xl font-serif font-thin text-gray-800">
-              Hotel Information
-            </h3>
-
-            <div className="grid grid-cols-3 gap-y-4 gap-x-10">
-              {data.map((d) => (
-                <div key={d.id}>
-                  <div className="py-8 border-b space-y-1">
-                    <p className="text-lg font-serif font-thin text-gray-600">
-                      {d.title}
-                    </p>
-                    {d.subDescription ? (
-                      <div className="text-sm text-gray-800 space-y-1">
-                        <p className="font-medium">
-                          Check in:
-                          <span className="ml-1 font-thin">
-                            {d.description}
-                          </span>
-                        </p>
-                        <p className="font-medium">
-                          Check out:
-                          <span className="ml-1 font-thin">
-                            {d.subDescription}
-                          </span>
-                        </p>
-                      </div>
-                    ) : d.address ? (
-                      <p className="text-sm text-gray-800 font-thin underline">
-                        {d.address}
-                      </p>
-                    ) : d.services ? (
-                      d.services.map((s) => (
-                        <p
-                          className="text-sm text-gray-800 font-thin"
-                          key={s.id}
-                        >
-                          {s.service}
-                        </p>
-                      ))
-                    ) : (
-                      <p className="text-sm text-gray-800 font-thin">
-                        {d.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <button
-              className="place-self-center border border-black hover:bg-gray-950 hover:text-gray-50 duration-300 px-10 py-2.5 font-semibold text-sm"
-              onClick={() => Router.push("/hotel/reservation")}
-            >
-              Book
-            </button>
+    <div className="mt-32">
+      <Carousel
+        plugins={[plugin.current]}
+        className="w-full h-full"
+        onMouseEnter={plugin.current.stop}
+        onMouseLeave={plugin.current.reset}
+      >
+        <CarouselContent>
+          {rooms.map((r, index) => (
+            <CarouselItem key={index}>
+              <Image
+                src={r.image}
+                height={1050}
+                width={1050}
+                alt="Image"
+                className="brightness-75 w-full h-[700px] object-cover object-center"
+              />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+      {/* <section className={embla.embla}>
+        <div className="overflow-hidden" ref={emblaRef}>
+          <div className={embla.embla__container}>
+            {rooms.map((r, index) => (
+              <div className={embla.embla__slide} key={index}>
+                <Image
+                  src={r.image}
+                  height={1050}
+                  width={1050}
+                  alt="Image"
+                  className="absolute brightness-75 w-full h-[700px] object-cover object-center"
+                />
+                <p className="absolute bottom-48 text-gray-100 left-32 z-10 text-5xl font-thin font-serif">
+                  {r.title}
+                </p>
+              </div>
+            ))}
           </div>
-        </section>
-      </div>
-    </section>
+        </div>
+
+        <div className="embla__controls">
+          <div className="embla__buttons">
+            <PrevButton
+              onClick={onPrevButtonClick}
+              disabled={prevBtnDisabled}
+            />
+            <NextButton
+              onClick={onNextButtonClick}
+              disabled={nextBtnDisabled}
+            />
+          </div>
+        </div>
+      </section> */}
+      {/* <Carousel className="w-full">
+        <CarouselContent>
+          {rooms.map((r, index) => (
+            <CarouselItem key={index}>
+              <div className="p-1">
+                <section
+                  key={r.id}
+                  className="relative flex-none snap-start w-screen h-screen grid grid-cols-3 items-center gap-x-6 py-8"
+                >
+                  <p className="absolute text-4xl font-serif text-white z-40 top-28 left-12 border-b pb-5 w-2/5">
+                    Our selection of rooms
+                  </p>
+                  <div className="h-screen z-20 flex justify-end items-end pb-10 bg-gradient-to-r from-black/75 to-transparent px-12 text-slate-200 -mt-8">
+                    <div className="space-y-4">
+                      <h2 className="text-4xl">{r.title}</h2>
+                      <p>{r.description}</p>
+                    </div>
+                  </div>
+
+                  <Image
+                    src={r.image}
+                    height={1050}
+                    width={1050}
+                    alt="Image"
+                    className="w-screen h-screen absolute brightness-75"
+                  />
+                </section>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel> */}
+      {/* <section className="overflow-x-auto snap-x snap-center snap-mandatory flex flex-nowrap mt-32">
+        <div className="flex flex-row">
+          {rooms.map((d) => (
+            <section
+              key={d.id}
+              className="relative flex-none snap-start w-screen h-screen grid grid-cols-3 items-center gap-x-6 py-8"
+            >
+              <p className="absolute text-4xl font-serif text-white z-40 top-28 left-12 border-b pb-5 w-2/5">
+                Our selection of rooms
+              </p>
+              <div className="h-screen z-20 flex justify-end items-end pb-10 bg-gradient-to-r from-black/75 to-transparent px-12 text-slate-200 -mt-8">
+                <div className="space-y-4">
+                  <h2 className="text-4xl">{d.title}</h2>
+                  <p>{d.description}</p>
+                </div>
+              </div>
+
+              <Image
+                src={d.image}
+                height={1050}
+                width={1050}
+                alt="Image"
+                className="w-screen h-screen absolute brightness-75"
+              />
+            </section>
+          ))}
+        </div>
+      </section> */}
+    </div>
   );
 };
 
 export default HomeRooms;
-
-{
-  /* <div className="grid grid-cols-2 items-center my-20">
-        <p className="text-center text-wrap text-gray-500 px-28">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi error
-          animi, ad deleniti, reiciendis excepturi ipsam cumque maxime odio
-          necessitatibus corporis ut iste asperiores facere. Tempora architecto
-          quisquam aliquam natus.
-        </p>
-        <Image src={"/hotel-1.jpg"} alt="Image" height={1000} width={1000} />
-      </div> */
-}
