@@ -25,7 +25,7 @@ const MainNavBar = ({ className }: { className: string }) => {
     <nav
       className={
         scrolled
-          ? `${className} group w-full h-16 px-8 md:px-10 bg-slate-100 duration-500 z-50` // scrolled
+          ? `${className} group w-full h-16 px-8 md:px-10 bg-white duration-500 z-50` // scrolled
           : `${className} group w-full h-10 md:h-24 px-8 md:px-10 pb-4 pt-2.5 bg-transparent duration-500` // not scrolled hover:bg-[#FFD493]
       }
     >
