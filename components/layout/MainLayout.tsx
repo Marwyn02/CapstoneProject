@@ -8,6 +8,7 @@ import FooterNav from "@/components/nav/footer/FooterNav";
 import HomePromotion from "@/components/home/HomePromotion";
 import HomeIntro from "../home/HomeIntro";
 import HomeRooms from "../home/HomeRooms";
+import HomeHotelInformation from "../home/HomeHotelInformation";
 
 const MainLayout = () => {
   return (
@@ -19,6 +20,7 @@ const MainLayout = () => {
 
       <HomeIntro />
       <HomeRooms />
+      <HomeHotelInformation />
       <HomeMap />
       <HomePromotion />
       <FooterNav />
