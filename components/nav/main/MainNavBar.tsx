@@ -31,7 +31,9 @@ const MainNavBar = ({ className }: { className: string }) => {
     >
       <section className="grid grid-cols-2 justify-between md:grid-cols-3 md:justify-center items-center">
         <div className="hidden md:block">
-          <p className="text-xs font-bold tracking-widest">+63 919 231 9278</p>
+          <p className="text-xs font-bold tracking-wide text-gray-700">
+            +63 919 231 9278
+          </p>
         </div>
 
         <div className="flex flex-row justify-start md:justify-center items-center text-[#2A3242] font-extralight tracking-wider font-serif cursor-default">
