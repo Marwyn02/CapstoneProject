@@ -9,6 +9,7 @@ import HomePromotion from "@/components/home/HomePromotion";
 import HomeIntro from "../home/HomeIntro";
 import HomeRooms from "../home/HomeRooms";
 import HomeHotelInformation from "../home/HomeHotelInformation";
+import HomeHistory from "../home/HomeHistory";
 
 const MainLayout = () => {
   return (
@@ -21,6 +22,7 @@ const MainLayout = () => {
       <HomeIntro />
       <HomeRooms />
       <HomeHotelInformation />
+      <HomeHistory />
       <HomeMap />
       <HomePromotion />
       <FooterNav />
