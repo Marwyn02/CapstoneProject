@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 const FooterNav = () => {
   return (
@@ -40,12 +41,15 @@ const FooterNav = () => {
               Join us
             </h1>
             <div className="space-y-2">
-              <p className="text-sm font-light text-gray-400">
+              <p className="text-sm font-light text-gray-400 mb-6">
                 Be a member in our club
               </p>
-              <button className="border px-12 py-1.5 border-gray-200 text-sm font-light hover:bg-gray-200 hover:text-gray-800 hover:font-medium duration-300">
+              <Link
+                href={"/register"}
+                className="border px-12 py-2 border-gray-200 text-sm font-light hover:bg-gray-200 hover:text-gray-800 hover:font-medium duration-300"
+              >
                 Join
-              </button>
+              </Link>
             </div>
           </div>
         </div>

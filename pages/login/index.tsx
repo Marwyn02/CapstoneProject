@@ -13,8 +13,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const { data } = await supabase.auth.getUser();
 
-  // console.log(data);
-
   // if user IS authenticated
   if (data.user) {
     return {

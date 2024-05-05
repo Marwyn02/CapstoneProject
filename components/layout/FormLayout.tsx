@@ -1,5 +1,5 @@
 import React from "react";
-import FormNavBar from "../nav/FormNavBar";
+import FormNavBar from "../nav/main/FormNavBar";
 
 const FormLayout = ({ children }: any) => {
   return (

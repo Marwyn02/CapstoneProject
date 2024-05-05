@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import Router from "next/router";
+
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -20,8 +22,14 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { z } from "zod";
 
-import { CalendarIcon } from "lucide-react";
-import Router from "next/router";
+import { CalendarIcon, UserRound, Plus, Minus } from "lucide-react";
+import useStore from "@/store/store";
+import { usePathname } from "next/navigation";
+
+type ScreenProps = {
+  width: number;
+  height: number;
+};
 
 const HomeReserveAvailabiltySchema = z.object({
   date: z.object({
@@ -33,20 +41,30 @@ const HomeReserveAvailabiltySchema = z.object({
 });
 
 const HomeReserveAvailabilityForm = () => {
+  const path = usePathname();
+  const {
+    setDate,
+    date,
+    setNightStay,
+    setAdult,
+    adult,
+    setChildren,
+    children,
+  } = useStore();
   const [loading, setLoading] = useState<boolean>(true);
 
   const [daysCheck, setDaysCheck] = useState<number>();
 
   const [scheduleCheck, setScheduleCheck] = useState<any>();
-  const [adultCount, setAdultCount] = useState<number>(0);
-  const [childrenCount, setChildrenCount] = useState<number>(0);
+  const [adultCount, setAdultCount] = useState<number>(adult || 2);
+  const [childrenCount, setChildrenCount] = useState<number>(children || 0);
 
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState<boolean>(false);
 
-  const [screenSize, setScreenSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
+  const [screenSize, setScreenSize] = useState<ScreenProps>(() => ({
+    width: 0,
+    height: 0,
+  }));
 
   // Disable date yesterdays
   const disabledBeforeDate = new Date(
@@ -59,7 +77,11 @@ const HomeReserveAvailabilityForm = () => {
   const form = useForm<z.infer<typeof HomeReserveAvailabiltySchema>>({
     resolver: zodResolver(HomeReserveAvailabiltySchema),
     defaultValues: {
-      adult: "1 Adult",
+      date: {
+        from: date.from,
+        to: date.to,
+      },
+      adult: "2 Adults",
       children: "0",
     },
   });
@@ -73,26 +95,14 @@ const HomeReserveAvailabilityForm = () => {
         return;
       }
 
-      if (data) {
-        const values = {
-          adultCount: `${adultCount} ${adultCount > 1 ? "adults" : "adult"}`,
-          childrenCount: childrenCount,
-          date: {
-            from: data.date.from,
-            to: data.date.to,
-          },
-          days: daysCheck,
-        };
-
-        console.log(values);
-
-        // setDate(data?.date.from, data?.date.to);
-        // setDayStay(daysCheck);
-        // setAdult(data.adult);
-        // setChildren(data.children);
-        // setChildrenAge(data.childrenAge);
+      if (data || (date.from && date.to)) {
+        setDate(data?.date.from, data?.date.to);
+        setNightStay(daysCheck);
+        setAdult(adultCount);
+        setChildren(childrenCount);
 
         Router.push("/hotel");
+        setLoading(false);
       }
     } catch (error) {
       setLoading(false);
@@ -101,12 +111,12 @@ const HomeReserveAvailabilityForm = () => {
   }
 
   useEffect(() => {
-    if (adultCount > 0 && scheduleCheck) {
+    if ((adultCount > 0 && scheduleCheck) || (date.from && date.to)) {
       setLoading(false);
     } else {
       setLoading(true);
     }
-  }, [adultCount, scheduleCheck]);
+  }, [adultCount, scheduleCheck, date]);
 
   // Day Stay Calculator
   useEffect(() => {
@@ -125,12 +135,14 @@ const HomeReserveAvailabilityForm = () => {
         height: window.innerHeight,
       });
     };
-
-    window.addEventListener("resize", handleResize);
+    setTimeout(() => {
+      handleResize();
+      window.addEventListener("resize", handleResize);
+    }, 0);
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [screenSize]);
+  }, []);
 
   // Scroll changes
   useEffect(() => {
@@ -152,17 +164,16 @@ const HomeReserveAvailabilityForm = () => {
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className={
-          screenSize.width >= 768
+          path === "/hotel"
+            ? "sticky top-2 flex justify-center items-center gap-x-4 p-2 z-50 bg-white translate-y-14 duration-700"
+            : screenSize.width >= 768
             ? scrolled
-              ? "flex justify-around items-start px-2 py-8 bg-white shadow-sm -translate-y-0 duration-700" // scrolled
-              : "flex justify-around items-start px-2 py-8 mx-10 bg-slate-50 shadow-sm -translate-y-14 duration-700" // not scrolled
-            : "flex-col px-8 py-8 bg-white shadow-sm space-y-5" // mobile view
+              ? "sticky top-16 z-50 flex justify-center items-center gap-x-4 p-2 bg-white shadow-sm -translate-y-0 duration-700" // scrolled
+              : "flex justify-center items-center gap-x-4 p-2 mx-auto bg-white -translate-y-14 duration-700" // not scrolled
+            : "flex-col p-8 bg-white shadow-sm space-y-5" // mobile view
         }
       >
         <div className="space-y-2">
-          <p className="text-sm font-semibold tracking-wide">
-            Check-in / Check-out
-          </p>
           {/* Date checkin checkout input field  */}
           <FormField
             control={form.control}
@@ -180,7 +191,23 @@ const HomeReserveAvailabilityForm = () => {
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {field.value?.from ? (
+                        {date.from && date.to ? (
+                          <>
+                            {new Date(date.from).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            }) +
+                              " " +
+                              "-" +
+                              " " +
+                              new Date(date.to).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })}
+                          </>
+                        ) : field.value?.from ? (
                           field.value.to ? (
                             <>
                               {format(field.value.from, "LLL dd, y") +
@@ -193,7 +220,7 @@ const HomeReserveAvailabilityForm = () => {
                             format(field.value.from, "LLL dd, y")
                           )
                         ) : (
-                          <span>Pick a date</span>
+                          <span>Arrival - Departure</span>
                         )}
                       </Button>
                     </PopoverTrigger>
@@ -285,61 +312,67 @@ const HomeReserveAvailabilityForm = () => {
 
         {/* Desktop view  */}
         <div className="space-y-2 hidden md:block">
-          <p className="text-sm font-semibold tracking-wide">Adults</p>
           {/* Adult Counting */}
           <div className="flex items-center gap-x-3">
             <button
               type="button"
-              className="border border-black px-2.5 py-0.5"
+              className="border border-black p-2"
               onClick={() => {
                 if (adultCount < 20) {
-                  setAdultCount(adultCount + 1);
+                  setAdultCount((prevCount) => prevCount + 1);
                 }
               }}
             >
-              +
+              <Plus className="h-4 w-4" />
             </button>
-            <span>{adultCount}</span>
+            <span className="flex items-center text-sm">
+              <UserRound className="h-5 w-5 mr-3 text-gray-600" />{" "}
+              {adultCount > 1 ? `${adultCount} adults` : `${adultCount} adult`}
+            </span>
             <button
               type="button"
-              className="border border-black px-2.5 py-0.5"
+              className="border border-black p-2"
               onClick={() => {
                 if (adultCount > 0) {
                   setAdultCount(adultCount - 1);
                 }
               }}
             >
-              -
+              <Minus className="h-4 w-4" />
             </button>
           </div>
         </div>
 
         <div className="space-y-2 hidden md:block">
-          <p className="text-sm font-semibold tracking-wide">Children</p>
           {/* Children Counting */}
           <div className="flex items-center gap-x-3">
             <button
               type="button"
-              className="border border-black px-2.5 py-0.5"
+              className="border border-black p-2"
               onClick={() => {
                 if (childrenCount < 20) {
                   setChildrenCount(childrenCount + 1);
                 }
               }}
             >
-              +
+              <Plus className="h-4 w-4" />
             </button>
-            <span>{childrenCount}</span>
+            <span className="text-sm">
+              {" "}
+              {childrenCount > 1
+                ? `${childrenCount} children`
+                : `${childrenCount} child`}
+            </span>
             <button
               type="button"
-              className="border border-black px-2.5 py-0.5"
+              className="border border-black p-2"
               onClick={() => {
                 if (childrenCount > 0) {
                   setChildrenCount(childrenCount - 1);
                 }
               }}
             >
-              -
+              <Minus className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -350,7 +383,7 @@ const HomeReserveAvailabilityForm = () => {
             className="w-full md:w-auto mt-2.5 md:mt-0 border border-slate-800 px-8 py-3.5 rounded-none bg-transparent text-xs font-semibold tracking-wide text-[#2A3242] hover:bg-[#2A3242] hover:text-slate-100 duration-300"
             disabled={loading}
           >
-            Check availability
+            {path !== "/hotel" ? "Book" : "Change book"}
           </Button>
         </div>
       </form>

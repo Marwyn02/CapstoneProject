@@ -2,6 +2,10 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 
 import { createClient } from "@/utils/supabase/component";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import FormLayout from "../layout/FormLayout";
+import { Button } from "../ui/button";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -29,42 +33,69 @@ export default function LoginPage() {
     router.push("/");
   }
 
+  async function signInWithGoogle() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
+    });
+
+    if (error) {
+      console.error(error);
+    }
+  }
   return (
     <main>
-      <form>
-        <section className="p-16 space-y-6">
-          <div className="flex flex-col space-y-2">
-            <label htmlFor="email" className="font-semibold">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="bg-gray-100 border rounded-md w-min"
-            />
-          </div>
-          <div className="flex flex-col space-y-2">
-            <label htmlFor="password" className="font-semibold">
-              Password:
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="bg-gray-100 border rounded-md w-min"
-            />
-          </div>
-        </section>
-        <button type="button" onClick={logIn}>
-          Log in
-        </button>
-        <button type="button" onClick={signUp}>
-          Sign up
-        </button>
-      </form>
+      <FormLayout>
+        <div className="grid grid-cols-3">
+          <section className="pt-48 px-10 space-y-6 col-span-1">
+            <h1 className="mb-10 text-3xl font-bold">Register</h1>
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="youremail@yahoo.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label htmlFor="name">Name</Label>
+              <Input type="name" id="name" placeholder="Your name" />
+            </div>
+
+            <Button type="button" onClick={logIn}>
+              Log in
+            </Button>
+            <Button type="button" onClick={signUp}>
+              Sign up
+            </Button>
+
+            <div>
+              <Button type="button" onClick={signInWithGoogle}>
+                Log in with Google
+              </Button>
+            </div>
+          </section>
+          <section className="w-full h-screen col-span-2 bg-red-300"></section>
+        </div>
+      </FormLayout>
     </main>
   );
 }

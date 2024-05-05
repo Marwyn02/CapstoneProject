@@ -3,7 +3,7 @@ import React from "react";
 
 const HomePromotion = () => {
   return (
-    <section className="h-screen w-full grid bg-gray-950 mb-10">
+    <section className="h-screen w-full grid bg-zinc-800 mb-10">
       <div className="grid place-self-center">
         <div className="place-self-center border-4 border-white px-32 py-24">
           <div className=" text-center space-y-3">
