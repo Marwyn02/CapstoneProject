@@ -1,4 +1,5 @@
 import React from "react";
+import type { User } from "@supabase/supabase-js";
 import MainNavBar from "../nav/main/MainNavBar";
 
 import HomeReserveAvailabilityForm from "@/components/home/HomeReserveAvailabilityForm";
@@ -11,10 +12,10 @@ import HomeRooms from "../home/HomeRooms";
 import HomeHotelInformation from "../home/HomeHotelInformation";
 import HomeHistory from "../home/HomeHistory";
 
-const MainLayout = () => {
+const MainLayout = ({ user }: { user: User }) => {
   return (
     <section className="relative bg-white scroll-smooth">
-      <MainNavBar className="fixed z-10 text-[#9da6b7]" />
+      <MainNavBar user={user} className="fixed z-10 text-[#9da6b7]" />
       <HomeLandingPage />
 
       <HomeReserveAvailabilityForm />
