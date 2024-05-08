@@ -1,69 +1,102 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import useStore from "@/store/store";
-import RoomCard from "../card/RoomCard";
+import FormNavBar from "@/components/nav/main/FormNavBar";
 
 const RoomInvoice = () => {
-  const { date, dayStay, room, adult, children, childrenAge } = useStore();
-  const [dayPrice, setDayPrice] = useState<number>();
-
-  useEffect(() => {
-    if (dayStay) {
-      const serviceCharge = 500;
-
-      const totalDayprice = dayStay * 1500 + serviceCharge;
-      setDayPrice(totalDayprice);
-    }
-  }, [dayStay]);
+  const { date, nightStay, room, adult, children, roomPrice } = useStore();
+  const [totalPrice] = useState<number>(roomPrice * (nightStay ?? 0) + 150);
   return (
-    <section className="">
-      <section className="flex space-y-6 space-x-4 my-2.5 w-full px-8 py-4 rounded-lg">
-        <div className="flex flex-col">
-          <RoomCard />
-          <RoomCard />
-          <RoomCard />
+    <section>
+      <FormNavBar />
+      <section className="grid grid-cols-2 space-y-6 space-x-4 w-full px-10 py-16 rounded-lg">
+        <div className="pt-10">
+          <h1 className="text-4xl font-bold mb-20">
+            Thank you for booking to us!
+          </h1>
+          <Link href={"/"} className="text-sm">
+            Back to home
+          </Link>
         </div>
-        <div className="border p-5 w-full h-fit sticky top-6">
-          {dayStay && (
+        <div className="sticky shadow-lg h-min w-full my-20 pt-4 pb-10 px-16 space-y-6">
+          <h2 className="font-thin font-serif text-2xl border-b border-gray-400 pb-6">
+            Receipt for your booking
+          </h2>
+
+          <div className="py-6 border-b">
+            <p className="font-medium text-sm text-gray-800">Coastal Charm</p>
+            <p className="text-sm text-gray-500">La Union, Philippines</p>
+          </div>
+
+          {/* Check in/ Check out field */}
+          <div className="border-b pb-6 space-y-8">
             <div>
-              <h1 className="text-2xl font-semibold mb-2">Your Stay</h1>
-              <section className="text-sm mb-2">
-                <p className="italic">
-                  {new Date(date.from).toDateString() +
-                    " " +
-                    "-" +
-                    " " +
-                    new Date(date.to).toDateString()}
-                </p>
-                {adult ? <p>{adult}</p> : ""}
-                {parseInt(children) !== 0 &&
-                  (parseInt(children) === 1 ? (
-                    <p>{children} Child</p>
-                  ) : (
-                    <p>{children} Children</p>
-                  ))}
-              </section>
-              <section className="font-semibold italic text-gray-800">
-                {dayStay} {dayStay <= 1 ? "Night" : "Nights"}
-                <div className="flex justify-between items-center text-sm font-normal my-3">
-                  <p className="indent-6">1500 / per night</p>
-                  <p className="font-medium">₱{dayStay * 1500}</p>
-                </div>
-                <div>
-                  <p>Taxes and Fees</p>
-                  <div className="flex justify-between items-center font-normal text-sm">
-                    <p className="indent-6">Service charge</p>
-                    <p className="font-medium">₱500</p>
-                  </div>
-                </div>
-              </section>
-              <div className="border-y pt-5 pb-10 my-5 flex justify-between items-center">
-                <p className="text-xl font-medium">Total:</p>
-                <p className="font-medium">₱{dayPrice}</p>
-              </div>
+              <p className="font-medium text-sm text-gray-800">Check in:</p>
+              <p className="text-sm text-gray-500">
+                {date.from !== undefined && date.from !== ""
+                  ? new Date(date.from).toDateString()
+                  : ""}
+              </p>
             </div>
-          )}
-          <Link href="/reservation">Back to reservation</Link>
+            <div>
+              <p className="font-medium text-sm text-gray-800">Check out:</p>
+              <p className="text-sm text-gray-500">
+                {date.to !== undefined && date.to !== ""
+                  ? new Date(date.to).toDateString()
+                  : ""}
+              </p>
+            </div>
+
+            <div>
+              <p className="font-medium text-sm text-gray-800">
+                Length of stay:
+              </p>
+              <p className="text-sm text-gray-500">
+                {date.to && nightStay && nightStay > 1
+                  ? `${nightStay} nights`
+                  : nightStay && nightStay <= 1
+                  ? `${nightStay} night`
+                  : ""}
+              </p>
+            </div>
+          </div>
+
+          <div className="border-b pb-6">
+            <p className="text-sm text-gray-500">
+              {adult > 1 ? `${adult} adults` : `${adult} adult`}
+            </p>
+            <p className="text-sm text-gray-400">
+              {children > 1 ? `${children} children` : `${children} child`}
+            </p>
+          </div>
+
+          <div className="border-b pb-6">
+            <p className="text-sm text-gray-500">{room}</p>
+          </div>
+
+          <div className="pb-6">
+            <p className="text-sm text-gray-500">1 room</p>
+          </div>
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <p className="text-sm text-gray-500">Rooms: </p>
+              <p className="font-medium text-sm text-gray-800">
+                PHP {roomPrice}
+              </p>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <p className="text-sm text-gray-500">Taxes: </p>
+              <p className="font-medium text-sm text-gray-800">PHP 150</p>
+            </div>
+
+            <div className="flex justify-between items-center py-2">
+              <p className="font-medium text-sm text-gray-800">Total: </p>
+              <p className="font-bold text-4xl text-black tracking-tighter">
+                {`PHP ${totalPrice}`}
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </section>
