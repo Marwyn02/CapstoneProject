@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
 
 import { NavSheetButton } from "../ui/NavSheetButton";
+import { AuthNavBar } from "./AuthNavbar";
 
-const MainNavBar = ({ className }: { className: string }) => {
+const MainNavBar = ({ user, className }: { user: User; className: string }) => {
   const [scrolled, setScrolled] = useState(false);
 
   // Scroll changes
@@ -30,13 +32,11 @@ const MainNavBar = ({ className }: { className: string }) => {
       }
     >
       <section className="grid grid-cols-2 justify-between md:grid-cols-3 md:justify-center items-center">
-        <div className="hidden md:block">
-          <p className="text-xs font-bold tracking-wide text-gray-700">
-            +63 919 231 9278
-          </p>
+        <div className="hidden md:flex md:order-3 md:text-end md:justify-end">
+          <AuthNavBar user={user} />
         </div>
 
-        <div className="flex flex-row justify-start md:justify-center items-center text-[#2A3242] font-extralight tracking-wider font-serif cursor-default">
+        <div className="flex flex-row justify-start md:justify-center items-center text-[#2A3242] font-extralight tracking-wider font-serif cursor-default md:order-2">
           <h1 className="hidden md:block">Coastal</h1>
 
           <Image
@@ -53,8 +53,8 @@ const MainNavBar = ({ className }: { className: string }) => {
           <h1 className="hidden md:block">Charm</h1>
         </div>
 
-        <div className="flex justify-end">
-          <NavSheetButton />
+        <div className="flex justify-end md:order-1 md:justify-start">
+          <NavSheetButton user={user} />
         </div>
       </section>
     </nav>
