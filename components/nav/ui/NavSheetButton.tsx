@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+
 import {
   Sheet,
   SheetClose,
@@ -10,9 +10,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { createClient } from "@/utils/supabase/component";
-import Router from "next/router";
-import { User } from "@supabase/supabase-js";
 
 const navigations = [
   {
@@ -29,27 +26,10 @@ const navigations = [
   },
 ];
 
-export function NavSheetButton({ user }: { user: User }) {
-  const supabase = createClient();
-
-  async function signOut() {
-    try {
-      const { error } = await supabase.auth.signOut();
-
-      if (error) {
-        throw error;
-      }
-
-      Router.push("/");
-    } catch (error) {
-      console.error("ERROR! ", error);
-    }
-  }
-
+export function NavSheetButton() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        {/* {children} */}
         <button
           type="button"
           className="flex items-center bg-transparent border-0 hover:bg-transparent hover:opacity-60 hover:border-0 duration-300 focus:outline-none"
@@ -81,13 +61,7 @@ export function NavSheetButton({ user }: { user: User }) {
           </section>
         </SheetHeader>
 
-        <SheetFooter>
-          {user && (
-            <Button type="button" onClick={signOut}>
-              Sign out
-            </Button>
-          )}
-        </SheetFooter>
+        <SheetFooter></SheetFooter>
       </SheetContent>
     </Sheet>
   );

@@ -54,7 +54,7 @@ const MainNavBar = ({ user, className }: { user: User; className: string }) => {
         </div>
 
         <div className="flex justify-end md:order-1 md:justify-start">
-          <NavSheetButton user={user} />
+          <NavSheetButton />
         </div>
       </section>
     </nav>
