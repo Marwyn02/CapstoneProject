@@ -1,12 +1,33 @@
 import React from "react";
 import RoomInvoice from "@/components/form/invoice/RoomInvoice";
 
-const ReservationInvoicePage = () => {
+import { GetServerSidePropsContext } from "next";
+import { createClient } from "@/utils/supabase/server-props";
+import { User } from "@supabase/supabase-js";
+import FormLayout from "@/components/layout/FormLayout";
+
+const ReservationInvoicePage = ({ user }: { user: User }) => {
   return (
-    <div className="p-10">
+    <FormLayout user={user}>
       <RoomInvoice />
-    </div>
+    </FormLayout>
   );
 };
 
 export default ReservationInvoicePage;
+
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const supabase = createClient(context);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return {
+    props: {
+      user,
+    },
+  };
+};

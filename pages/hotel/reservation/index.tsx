@@ -1,12 +1,32 @@
 import React from "react";
-import { RoomForm } from "@/components/form/RoomForm";
+import { ReservationForm } from "@/components/form/ReservationForm";
+import RoomSummary from "@/components/form/invoice/RoomSummary";
+import FormLayout from "@/components/layout/FormLayout";
 
-const ReservationPage = () => {
+import { createClient } from "@/utils/supabase/server-props";
+import { GetServerSidePropsContext } from "next";
+import { User } from "@supabase/supabase-js";
+
+export default function ReservationPage({ user }: { user: User }) {
   return (
-    <div className="p-8">
-      <RoomForm />
-    </div>
+    <FormLayout user={user}>
+      <section className="grid grid-cols-2 md:px-20 lg:px-40">
+        <ReservationForm user={user} />
+        <RoomSummary />
+      </section>
+    </FormLayout>
   );
-};
+}
 
-export default ReservationPage;
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const supabase = createClient(context);
+
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  return {
+    props: { user },
+  };
+}
