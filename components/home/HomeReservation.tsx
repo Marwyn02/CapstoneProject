@@ -20,32 +20,27 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
-
-import { format } from "date-fns";
 import { z } from "zod";
 
-import { CalendarIcon, UserRound, Plus, Minus } from "lucide-react";
+import { CalendarIcon, UserRound } from "lucide-react";
 import useStore from "@/store/store";
-import { usePathname } from "next/navigation";
 
 type ScreenProps = {
   width: number;
   height: number;
 };
 
-const HomeReserveAvailabiltySchema = z.object({
+const homeReservationSchema = z.object({
   date: z.object({
     from: z.date(),
     to: z.date(),
   }),
-  adult: z.string(),
-  children: z.string(),
 });
 
-const HomeReserveAvailabilityForm = () => {
-  const path = usePathname();
+const HomeReservation = () => {
   const {
     setDate,
     date,
@@ -57,12 +52,6 @@ const HomeReserveAvailabilityForm = () => {
     children,
   } = useStore();
   const [loading, setLoading] = useState<boolean>(true);
-
-  const [daysCheck, setDaysCheck] = useState<number>();
-
-  const [scheduleCheck, setScheduleCheck] = useState<any>();
-  const [adultCount, setAdultCount] = useState<number>(adult || 2);
-  const [childrenCount, setChildrenCount] = useState<number>(children || 0);
 
   const [scrolled, setScrolled] = useState<boolean>(false);
 
@@ -79,33 +68,20 @@ const HomeReserveAvailabilityForm = () => {
     1
   );
 
-  const form = useForm<z.infer<typeof HomeReserveAvailabiltySchema>>({
-    resolver: zodResolver(HomeReserveAvailabiltySchema),
+  const form = useForm<z.infer<typeof homeReservationSchema>>({
+    resolver: zodResolver(homeReservationSchema),
     defaultValues: {
       date: {
         from: date.from,
         to: date.to,
       },
-      adult: "2 Adults",
-      children: "0",
     },
   });
 
-  function onSubmit(data: z.infer<typeof HomeReserveAvailabiltySchema>) {
+  function onSubmit(data: z.infer<typeof homeReservationSchema>) {
     try {
       setLoading(true);
-
-      if (adultCount === 0) {
-        setLoading(false);
-        return;
-      }
-
-      if (data || (date.from && date.to)) {
-        // setDate(data?.date.from, data?.date.to);
-        // setNightStay(daysCheck);
-
-        // if (children === 0)
-
+      if (data.date.from && data.date.to) {
         Router.push("/hotel");
         setLoading(false);
       }
@@ -116,12 +92,12 @@ const HomeReserveAvailabilityForm = () => {
   }
 
   useEffect(() => {
-    if ((adultCount > 0 && scheduleCheck) || (date.from && date.to)) {
+    if (adult > 1 && date.from && date.to) {
       setLoading(false);
     } else {
       setLoading(true);
     }
-  }, [adultCount, scheduleCheck, date]);
+  }, [adult, date]);
 
   // Day Stay Calculator
   useEffect(() => {
@@ -186,6 +162,7 @@ const HomeReserveAvailabilityForm = () => {
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
+                      type="button"
                       variant={"outline"}
                       className={cn(
                         "w-full md:w-[300px] mt-5 md:mt-0 justify-start text-left text-sm font-normal space-x-2 md:space-x-4",
@@ -193,7 +170,7 @@ const HomeReserveAvailabilityForm = () => {
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date.from && date.to ? (
+                      {date.from || date.to ? (
                         <section className="leading-tight md:flex md:divide-x md:space-x-5">
                           <div className="flex gap-x-0.5 text-slate-500 font-medium tracking-tightest">
                             <div className="flex items-center gap-x-0.5">
@@ -216,37 +193,35 @@ const HomeReserveAvailabilityForm = () => {
                               </p>
                             </div>
                             <p>-</p>
-                            <div className="flex items-center gap-x-0.5">
-                              <p>
-                                {" "}
-                                {new Date(date.to).toLocaleDateString("en-US", {
-                                  day: "numeric",
-                                })}
-                              </p>{" "}
-                              <p>
-                                {new Date(date.to).toLocaleDateString("en-US", {
-                                  month: "short",
-                                })}
-                              </p>
-                            </div>
+                            {date.to ? (
+                              <div className="flex items-center gap-x-0.5">
+                                <p>
+                                  {" "}
+                                  {new Date(date.to).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      day: "numeric",
+                                    }
+                                  )}
+                                </p>{" "}
+                                <p>
+                                  {new Date(date.to).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      month: "short",
+                                    }
+                                  )}
+                                </p>
+                              </div>
+                            ) : (
+                              <>Departure</>
+                            )}
                           </div>
                           <div className="text-center font-medium md:indent-4">
                             {nightStay}{" "}
                             {nightStay && nightStay > 1 ? "nights" : "night"}
                           </div>
                         </section>
-                      ) : field.value?.from ? (
-                        field.value.to ? (
-                          <>
-                            {format(field.value.from, "LLL dd, y") +
-                              " " +
-                              "-" +
-                              " " +
-                              format(field.value.to, "LLL dd, y")}
-                          </>
-                        ) : (
-                          format(field.value.from, "LLL dd, y")
-                        )
                       ) : (
                         <span>Arrival - Departure</span>
                       )}
@@ -260,7 +235,6 @@ const HomeReserveAvailabilityForm = () => {
                       selected={field.value}
                       onSelect={(value) => {
                         field.onChange(value);
-                        // setScheduleCheck(value);
                         setDate(value?.from, value?.to);
                       }}
                       numberOfMonths={2}
@@ -316,7 +290,7 @@ const HomeReserveAvailabilityForm = () => {
                   }
                 }}
               />
-              <div className="flex items-center text-sm font-semibold w-[70px]">
+              <p className="flex items-center text-sm font-semibold w-[70px]">
                 <UserRound className="h-4 w-4 mr-1.5 text-gray-600" />
                 {adult}{" "}
                 <span
@@ -328,12 +302,12 @@ const HomeReserveAvailabilityForm = () => {
                 >
                   {adult > 1 ? "adults" : "adult"}
                 </span>
-              </div>
+              </p>
               <GuestMinusCountButton
                 variant={"outline"}
                 size={"icon"}
                 onClick={() => {
-                  if (adult > 0) {
+                  if (adult > 1) {
                     setAdult(adult - 1);
                   }
                 }}
@@ -350,12 +324,12 @@ const HomeReserveAvailabilityForm = () => {
                   }
                 }}
               />
-              <div className="flex justify-center items-center text-sm font-semibold w-[70px]">
+              <p className="flex justify-center items-center text-sm font-semibold w-[70px]">
                 {children}{" "}
                 <span className="indent-1 font-normal text-xs">
                   {children > 1 ? "children" : "child"}
                 </span>
-              </div>
+              </p>
               <GuestMinusCountButton
                 variant={"outline"}
                 size={"icon"}
@@ -369,145 +343,6 @@ const HomeReserveAvailabilityForm = () => {
           </PopoverContent>
         </Popover>
 
-        {/* <section className="grid grid-cols-2 items-center md:hidden">
-   
-          <div className="flex justify-center items-center gap-x-1">
-            <GuestAddCountButton
-              size={"icon"}
-              onClick={() => {
-                if (adult < 20) {
-                  setAdult(adult + 1);
-                }
-              }}
-            />
-            <div className="flex items-center text-sm font-semibold w-[70px]">
-              <UserRound className="h-4 w-4 mr-1.5 text-gray-600" />
-              {adult > 1 ? (
-                <>
-                  {adult}
-                  <span className="indent-1 font-normal text-xs">adults</span>
-                </>
-              ) : (
-                <>
-                  {adult}
-                  <span className="indent-1 mr-1.5 font-normal text-xs">
-                    adult
-                  </span>
-                </>
-              )}
-            </div>
-            <GuestMinusCountButton
-              variant={"outline"}
-              size={"icon"}
-              onClick={() => {
-                if (adult > 0) {
-                  setAdult(adult - 1);
-                }
-              }}
-            />
-          </div>
-
-          <div className="flex justify-center items-center gap-x-1">
-            <GuestAddCountButton
-              size={"icon"}
-              onClick={() => {
-                if (children < 20) {
-                  setChildren(children + 1);
-                }
-              }}
-            />
-            <div className="flex justify-center items-center text-sm font-semibold w-[70px]">
-              {children > 1 ? (
-                <>
-                  {children}
-                  <span className="indent-1 font-normal text-xs">children</span>
-                </>
-              ) : (
-                <>
-                  {children}
-                  <span className="indent-1 font-normal text-xs">child</span>
-                </>
-              )}
-            </div>
-            <GuestMinusCountButton
-              variant={"outline"}
-              size={"icon"}
-              onClick={() => {
-                if (children > 0) {
-                  setChildren(children - 1);
-                }
-              }}
-            />
-          </div>
-
-          <div></div>
-        </section> */}
-
-        {/* Desktop view  */}
-        {/* <div className="space-y-2 hidden md:block">
-          <div className="flex items-center gap-x-3">
-            <button
-              type="button"
-              className="border border-black p-2"
-              onClick={() => {
-                if (adultCount < 20) {
-                  setAdultCount((prevCount) => prevCount + 1);
-                }
-              }}
-            >
-              <Plus className="h-4 w-4" />
-            </button>
-            <span className="flex items-center text-sm">
-              <UserRound className="h-5 w-5 mr-3 text-gray-600" />{" "}
-              {adultCount > 1 ? `${adultCount} adults` : `${adultCount} adult`}
-            </span>
-            <button
-              type="button"
-              className="border border-black p-2"
-              onClick={() => {
-                if (adultCount > 0) {
-                  setAdultCount(adultCount - 1);
-                }
-              }}
-            >
-              <Minus className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-
-        <div className="space-y-2 hidden md:block">
-          <div className="flex items-center gap-x-3">
-            <button
-              type="button"
-              className="border border-black p-2"
-              onClick={() => {
-                if (childrenCount < 20) {
-                  setChildrenCount(childrenCount + 1);
-                }
-              }}
-            >
-              <Plus className="h-4 w-4" />
-            </button>
-            <span className="text-sm">
-              {" "}
-              {childrenCount > 1
-                ? `${childrenCount} children`
-                : `${childrenCount} child`}
-            </span>
-            <button
-              type="button"
-              className="border border-black p-2"
-              onClick={() => {
-                if (childrenCount > 0) {
-                  setChildrenCount(childrenCount - 1);
-                }
-              }}
-            >
-              <Minus className="h-4 w-4" />
-            </button>
-          </div>
-        </div> */}
-
         <Button
           type="submit"
           variant={"outline"}
@@ -515,11 +350,10 @@ const HomeReserveAvailabilityForm = () => {
           disabled={loading}
         >
           Book
-          {/* {path !== "/hotel" ? "Book" : "Change book"} */}
         </Button>
       </form>
     </Form>
   );
 };
 
-export default HomeReserveAvailabilityForm;
+export default HomeReservation;
