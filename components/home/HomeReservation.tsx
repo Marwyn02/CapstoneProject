@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import Router from "next/router";
 
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { cn } from "@/lib/utils";
+import { z } from "zod";
+
 import {
   Button,
   GuestAddCountButton,
@@ -21,17 +25,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "@/lib/utils";
-import { z } from "zod";
-
 import { CalendarIcon, UserRound } from "lucide-react";
 import useStore from "@/store/store";
-
-type ScreenProps = {
-  width: number;
-  height: number;
-};
 
 const homeReservationSchema = z.object({
   date: z.object({
@@ -51,14 +46,9 @@ const HomeReservation = () => {
     setChildren,
     children,
   } = useStore();
+  // Utility States
   const [loading, setLoading] = useState<boolean>(true);
-
   const [scrolled, setScrolled] = useState<boolean>(false);
-
-  const [screenSize, setScreenSize] = useState<ScreenProps>(() => ({
-    width: 0,
-    height: 0,
-  }));
 
   // Disable date yesterdays
   const disabledBeforeDate = new Date(
@@ -108,23 +98,6 @@ const HomeReservation = () => {
     }
   }, [date, setNightStay]);
 
-  // Screen size detector
-  useEffect(() => {
-    const handleResize = () => {
-      setScreenSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-    setTimeout(() => {
-      handleResize();
-      window.addEventListener("resize", handleResize);
-    }, 0);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
   // Scroll changes
   useEffect(() => {
     const handleScroll = () => {
@@ -144,28 +117,26 @@ const HomeReservation = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={
-          screenSize.width >= 768
-            ? scrolled
-              ? "sticky top-16 z-50 flex justify-center items-center gap-x-4 p-2 bg-white shadow-sm -translate-y-0 duration-700" // scrolled
-              : "flex justify-center items-center gap-x-4 p-2 mx-auto bg-white -translate-y-14 duration-700" // not scrolled
-            : "h-auto grid grid-cols-5 gap-x-0.5 pb-4 px-8 bg-white shadow-sm space-y-5" // mobile view
-        }
+        className={`h-auto grid grid-cols-5 gap-x-0.5 pb-4 px-8 bg-white shadow-sm space-y-5 md:flex md:justify-center md:items-center md:py-2
+        md:space-y-0 md:gap-x-4 duration-700 ${
+          scrolled
+            ? "md:sticky md:top-16 md:z-50 md:shadow-sm md:-translate-y-0" // scrolled
+            : "md:mx-auto md:-translate-y-14" // not scrolled
+        }`}
       >
         {/* Date checking / checkout input field  */}
         <FormField
           control={form.control}
           name="date"
           render={({ field }) => (
-            <FormItem className="col-span-3">
+            <FormItem className="col-span-3 md:col-span-0 md:flex md:items-center">
               <FormControl>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
-                      type="button"
                       variant={"outline"}
                       className={cn(
-                        "w-full md:w-[300px] mt-5 md:mt-0 justify-start text-left text-sm font-normal space-x-2 md:space-x-4",
+                        "h-auto w-full md:w-[300px] mt-5 md:mt-0 justify-start text-left text-sm font-normal space-x-2 md:space-x-4",
                         !field.value && "text-muted-foreground"
                       )}
                     >
@@ -174,44 +145,42 @@ const HomeReservation = () => {
                         <section className="leading-tight md:flex md:divide-x md:space-x-5">
                           <div className="flex gap-x-0.5 text-slate-500 font-medium tracking-tightest">
                             <div className="flex items-center gap-x-0.5">
-                              <p>
-                                {" "}
+                              <>
                                 {new Date(date.from).toLocaleDateString(
                                   "en-US",
                                   {
                                     day: "numeric",
                                   }
                                 )}
-                              </p>{" "}
-                              <p>
+                              </>{" "}
+                              <>
                                 {new Date(date.from).toLocaleDateString(
                                   "en-US",
                                   {
                                     month: "short",
                                   }
                                 )}
-                              </p>
+                              </>
                             </div>
                             <p>-</p>
                             {date.to ? (
                               <div className="flex items-center gap-x-0.5">
-                                <p>
-                                  {" "}
+                                <>
                                   {new Date(date.to).toLocaleDateString(
                                     "en-US",
                                     {
                                       day: "numeric",
                                     }
                                   )}
-                                </p>{" "}
-                                <p>
+                                </>{" "}
+                                <>
                                   {new Date(date.to).toLocaleDateString(
                                     "en-US",
                                     {
                                       month: "short",
                                     }
                                   )}
-                                </p>
+                                </>
                               </div>
                             ) : (
                               <>Departure</>
@@ -250,14 +219,14 @@ const HomeReservation = () => {
 
         {/* Adult and Children Counting Field */}
         <Popover>
-          <PopoverTrigger className="col-span-2">
+          <PopoverTrigger className="col-span-2 md:col-span-0" asChild>
             <Button
               type="button"
-              className={
+              className={`w-full md:w-[150px] ${
                 children > 0
-                  ? "w-full md:w-[150px] flex space-x-2 items-center border border-black font-semibold py-1 px-2"
-                  : "w-full py-2"
-              }
+                  ? "flex space-x-2 items-center border border-black font-semibold py-1 px-2"
+                  : "py-2"
+              }`}
             >
               <UserRound className="w-4 mr-2" />
               <div className="text-start leading-none">
@@ -290,7 +259,7 @@ const HomeReservation = () => {
                   }
                 }}
               />
-              <p className="flex items-center text-sm font-semibold w-[70px]">
+              <div className="flex items-center text-sm font-semibold w-[70px]">
                 <UserRound className="h-4 w-4 mr-1.5 text-gray-600" />
                 {adult}{" "}
                 <span
@@ -302,7 +271,7 @@ const HomeReservation = () => {
                 >
                   {adult > 1 ? "adults" : "adult"}
                 </span>
-              </p>
+              </div>
               <GuestMinusCountButton
                 variant={"outline"}
                 size={"icon"}
@@ -324,12 +293,12 @@ const HomeReservation = () => {
                   }
                 }}
               />
-              <p className="flex justify-center items-center text-sm font-semibold w-[70px]">
+              <div className="flex justify-center items-center text-sm font-semibold w-[70px]">
                 {children}{" "}
                 <span className="indent-1 font-normal text-xs">
                   {children > 1 ? "children" : "child"}
                 </span>
-              </p>
+              </div>
               <GuestMinusCountButton
                 variant={"outline"}
                 size={"icon"}
@@ -346,7 +315,7 @@ const HomeReservation = () => {
         <Button
           type="submit"
           variant={"outline"}
-          className="col-span-5 w-full md:w-auto mt-2.5 md:mt-0 px-8 py-3.5 text-xs font-semibold tracking-wide text-[#2A3242] hover:bg-[#2A3242] hover:text-slate-100 duration-300"
+          className="col-span-5 md:col-span-0 w-full md:w-auto mt-2.5 md:mt-0 md:m-0 px-8 py-3.5 text-xs font-semibold tracking-wide text-[#2A3242] hover:bg-[#2A3242] hover:text-slate-100 duration-300"
           disabled={loading}
         >
           Book
