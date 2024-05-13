@@ -1,12 +1,20 @@
-import React from "react";
-import FormNavBar from "../nav/main/FormNavBar";
+import React, { ReactNode } from "react";
 
-const FormLayout = ({ children }: any) => {
+import MainNavBar from "../nav/main/MainNavBar";
+import { User } from "@supabase/supabase-js";
+
+const FormLayout = ({
+  user,
+  children,
+}: {
+  user: User;
+  children: ReactNode;
+}) => {
   return (
-    <section>
-      <FormNavBar />
+    <>
+      <MainNavBar user={user} />
       {children}
-    </section>
+    </>
   );
 };
 
