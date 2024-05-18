@@ -62,8 +62,8 @@ const HomeReservation = () => {
     resolver: zodResolver(homeReservationSchema),
     defaultValues: {
       date: {
-        from: date.from,
-        to: date.to,
+        from: new Date(date.from),
+        to: new Date(date.to),
       },
     },
   });
