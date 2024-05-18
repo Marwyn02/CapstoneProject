@@ -100,7 +100,7 @@ const HomeReservation = () => {
 
   // Day Stay Calculator
   useEffect(() => {
-    if ((date.from && date.to) !== undefined) {
+    if ((date.from && date.to) !== "") {
       const from = new Date(date.from);
       const to = new Date(date.to);
 
@@ -200,12 +200,12 @@ const HomeReservation = () => {
                               <>Departure</>
                             )}
                           </div>
-                          <div className="text-center font-medium md:indent-4">
-                            {Number(nightStay)}{" "}
-                            {Number(nightStay) && Number(nightStay) > 1
-                              ? "nights"
-                              : "night"}
-                          </div>
+
+                          {!isNaN(nightStay) && (
+                            <div className="text-center font-medium md:indent-4">
+                              {nightStay} {nightStay > 1 ? "nights" : "night"}
+                            </div>
+                          )}
                         </section>
                       ) : (
                         <span>Arrival - Departure</span>
