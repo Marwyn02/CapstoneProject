@@ -58,12 +58,16 @@ const HomeReservation = () => {
     1
   );
 
+  // Set the date if in condition
+  const defaultFromDate = date.from ? new Date(date.from) : undefined;
+  const defaultToDate = date.to ? new Date(date.to) : undefined;
+
   const form = useForm<z.infer<typeof homeReservationSchema>>({
     resolver: zodResolver(homeReservationSchema),
     defaultValues: {
       date: {
-        from: new Date(date.from),
-        to: new Date(date.to),
+        from: defaultFromDate,
+        to: defaultToDate,
       },
     },
   });
@@ -100,7 +104,7 @@ const HomeReservation = () => {
 
   // Day Stay Calculator
   useEffect(() => {
-    if ((date.from && date.to) !== "") {
+    if (date.from && date.to) {
       const from = new Date(date.from);
       const to = new Date(date.to);
 
