@@ -1,29 +1,24 @@
-import Router from "next/router";
 import React from "react";
+import Link from "next/link";
 
 const HomePromotion = () => {
   return (
-    <section className="h-screen w-full grid bg-zinc-800 mb-10">
-      <div className="grid place-self-center">
-        <div className="place-self-center border-4 border-white px-32 py-24">
-          <div className=" text-center space-y-3">
-            <h2 className="text-white text-2xl font-thin font-serif">
-              Join us for access to exclusive benefits!
-            </h2>
-            <button
-              className="text-sm w-32 text-black px-4 py-1.5 rounded-sm bg-white hover:bg-gray-400 hover:text-white duration-300"
-              onClick={() => Router.push("/register")}
-            >
-              Be a member
-            </button>
-          </div>
+    <section className="h-auto w-full grid bg-zinc-800 mb-[368px] lg:mb-[420px]">
+      <div className="grid place-self-center md:px-32 py-8 md:py-12">
+        <div className="text-center space-y-9">
+          <h2 className="text-white tracking-widest uppercase text-xl md:text-2xl font-thin font-serif mb-7 leading-tight">
+            Join us <br />{" "}
+            <span className="text-xs md:text-base leading-snug text-gray-300">
+              for access to exclusive benefits!
+            </span>
+          </h2>
+          <Link
+            href={"/register"}
+            className="border border-white text-xs uppercase md:font-medium tracking-widest text-white bg-transparent px-8 md:px-10 py-3 md:py-3.5 hover:bg-white hover:text-black duration-300"
+          >
+            Be a member
+          </Link>
         </div>
-        <p className="place-self-center text-white text-xs text-center w-1/2 pt-5">
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sapiente,
-          dolore eius quibusdam assumenda officiis deleniti ipsa corrupti
-          architecto error labore alias placeat atque doloremque facere
-          voluptatibus ex impedit, libero exercitationem?
-        </p>
       </div>
     </section>
   );

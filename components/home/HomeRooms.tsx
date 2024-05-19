@@ -25,15 +25,25 @@ const rooms = [
       "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas beatae facere excepturi asperiores, possimus recusandae nam autem libero ipsam voluptates quidem saepe ea unde eius accusamus pariatur doloremque voluptas voluptatem!",
     image: "/hotel-1.jpg",
   },
+  {
+    id: 3,
+    title: "Luxury Room",
+    image: "/RoomImage-2.jpg",
+  },
 ];
 
 const HomeRooms = () => {
   const plugin = React.useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: true })
+    Autoplay({ delay: 8000, stopOnInteraction: true })
   );
+
   return (
     <div className="mt-32">
       <Carousel
+        opts={{
+          loop: true,
+          align: "center",
+        }}
         plugins={[plugin.current]}
         className="w-full h-full"
         onMouseEnter={plugin.current.stop}
@@ -47,11 +57,16 @@ const HomeRooms = () => {
                 height={1050}
                 width={1050}
                 alt="Image"
-                className="brightness-75 contrast-100 saturate-150 w-full h-[700px] object-cover object-center"
+                className="brightness-75 contrast-100 saturate-150 w-full h-[375px] md:h-[700px] object-cover object-center"
               />
-              <p className="absolute top-1/2 left-64 text-7xl font-serif font-thin text-white">
-                {r.title}
-              </p>
+              <div className="absolute top-10 left-14 md:top-1/2 md:left-32">
+                <h2 className="text-3xl md:text-7xl font-serif font-thin text-white">
+                  {r.title}
+                </h2>
+                <p className="text-xs text-gray-100 md:mt-1">
+                  9 sq.m 1 toilet, 3 cabinets
+                </p>
+              </div>
             </CarouselItem>
           ))}
         </CarouselContent>
