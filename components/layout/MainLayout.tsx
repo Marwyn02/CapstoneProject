@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import type { User } from "@supabase/supabase-js";
 import MainNavBar from "../nav/main/MainNavBar";
 
@@ -13,9 +13,16 @@ import HomeHistory from "../home/HomeHistory";
 import FooterNav from "@/components/nav/footer/FooterNav";
 
 const MainLayout = ({ user }: { user: User }) => {
+  const mainNavBarRef = useRef<{ toggleFromFooter: () => void }>(null);
+
+  const handleFooterToggle = () => {
+    if (mainNavBarRef.current) {
+      mainNavBarRef.current.toggleFromFooter();
+    }
+  };
   return (
     <section className="relative bg-white scroll-smooth">
-      <MainNavBar user={user} />
+      <MainNavBar user={user} ref={mainNavBarRef} />
       <HomeLandingPage />
       <HomeReservation />
       <HomeIntro />
@@ -23,8 +30,8 @@ const MainLayout = ({ user }: { user: User }) => {
       <HomeHotelInformation />
       <HomeHistory />
       <HomeMap />
-      <HomePromotion />
-      <FooterNav />
+      {/* {user && <HomePromotion />} */}
+      <FooterNav toggleSheet={handleFooterToggle} />
     </section>
   );
 };

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable react/display-name */
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import Router from "next/router";
 import Link from "next/link";
 
@@ -21,8 +22,18 @@ import {
 import AuthLogin from "./authenticators/AuthLogin";
 import AuthSignUp from "./authenticators/AuthSignUp";
 
-export const AuthNavBar = ({ user }: { user: User }) => {
+type AuthNavBarProps = {
+  user: User;
+};
+
+export const AuthNavBar = forwardRef<
+  { toggleAction: () => void },
+  AuthNavBarProps
+>(({ user }, ref) => {
   const supabase = createClient();
+  useImperativeHandle(ref, () => ({
+    toggleAction,
+  }));
   const [signIn, setSignIn] = useState<boolean>(true);
 
   // Nav Sheet State
@@ -63,14 +74,17 @@ export const AuthNavBar = ({ user }: { user: User }) => {
     Router.push("/");
   }
 
+  const toggleAction = () => {
+    setOpen(true);
+  };
   const toggleSheet = () => {
     setOpen(false);
   };
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <button
-          type="button"
+        <Button
+          // type="button"
           className="flex justify-end items-center bg-transparent border-0 hover:bg-transparent hover:opacity-60 hover:border-0 duration-300 focus:outline-none"
         >
           {user ? (
@@ -83,7 +97,7 @@ export const AuthNavBar = ({ user }: { user: User }) => {
               <p>Create Account</p>
             </div>
           )}
-        </button>
+        </Button>
       </SheetTrigger>
       <SheetContent side={"right"} className="px-2">
         <SheetHeader>
@@ -160,4 +174,4 @@ export const AuthNavBar = ({ user }: { user: User }) => {
       </SheetContent>
     </Sheet>
   );
-};
+});
