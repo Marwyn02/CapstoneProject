@@ -6,7 +6,7 @@ interface AppState {
     from: any;
     to: any;
   };
-  nightStay: number | undefined;
+  nightStay: number;
   room: string;
   roomPrice: number;
   adult: number;
@@ -18,7 +18,7 @@ interface AppState {
 interface AppActions {
   setPlace: (place: string) => void;
   setDate: (from: any, to: any) => void;
-  setNightStay: (nightStay: number | undefined) => void;
+  setNightStay: (nightStay: number) => void;
   setRoom: (room: string) => void;
   setRoomPrice: (roomPrice: number) => void;
   setAdult: (adult: number) => void;

@@ -58,12 +58,16 @@ const HomeReservation = () => {
     1
   );
 
+  // Set the date if in condition
+  const defaultFromDate = date.from ? new Date(date.from) : undefined;
+  const defaultToDate = date.to ? new Date(date.to) : undefined;
+
   const form = useForm<z.infer<typeof homeReservationSchema>>({
     resolver: zodResolver(homeReservationSchema),
     defaultValues: {
       date: {
-        from: date.from,
-        to: date.to,
+        from: defaultFromDate,
+        to: defaultToDate,
       },
     },
   });
@@ -72,7 +76,16 @@ const HomeReservation = () => {
     try {
       setLoading(true);
       if (data.date.from && data.date.to) {
-        Router.push("/hotel");
+        Router.push({
+          pathname: "/hotel",
+          query: {
+            checkIn: data.date.from.toLocaleDateString(),
+            checkOut: data.date.to.toLocaleDateString(),
+            adults: adult,
+            childrens: children,
+            nights: nightStay,
+          },
+        });
         setLoading(false);
       }
     } catch (error) {
@@ -82,19 +95,24 @@ const HomeReservation = () => {
   }
 
   useEffect(() => {
-    if (adult > 1 && date.from && date.to) {
+    if (adult > 1 && date.from && date.to && nightStay > 0) {
       setLoading(false);
     } else {
       setLoading(true);
     }
-  }, [adult, date]);
+  }, [adult, date, nightStay]);
 
   // Day Stay Calculator
   useEffect(() => {
-    if ((date.from && date.to) !== undefined) {
-      const differenceMs = date.to - date.from;
-      const daysDifference = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
-      setNightStay(daysDifference);
+    if (date.from && date.to) {
+      const from = new Date(date.from);
+      const to = new Date(date.to);
+
+      if (from && to) {
+        const differenceMs = to.getTime() - from.getTime();
+        const daysDifference = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
+        setNightStay(daysDifference);
+      }
     }
   }, [date, setNightStay]);
 
@@ -136,14 +154,14 @@ const HomeReservation = () => {
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "h-auto w-full md:w-[300px] mt-5 md:mt-0 justify-start text-left text-sm font-normal space-x-2 md:space-x-4",
+                        "h-auto w-full md:w-[300px] mt-5 md:mt-0 justify-start text-left text-sm text-slate-600 font-normal space-x-2 py-2.5 md:space-x-4 hover:text-slate-100",
                         !field.value && "text-muted-foreground"
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {date.from || date.to ? (
                         <section className="leading-tight md:flex md:divide-x md:space-x-5">
-                          <div className="flex gap-x-0.5 text-slate-500 font-medium tracking-tightest">
+                          <div className="flex gap-x-0.5 font-medium tracking-tightest">
                             <div className="flex items-center gap-x-0.5">
                               <>
                                 {new Date(date.from).toLocaleDateString(
@@ -186,10 +204,12 @@ const HomeReservation = () => {
                               <>Departure</>
                             )}
                           </div>
-                          <div className="text-center font-medium md:indent-4">
-                            {nightStay}{" "}
-                            {nightStay && nightStay > 1 ? "nights" : "night"}
-                          </div>
+
+                          {!isNaN(nightStay) && (
+                            <div className="text-center font-medium md:indent-4">
+                              {nightStay} {nightStay > 1 ? "nights" : "night"}
+                            </div>
+                          )}
                         </section>
                       ) : (
                         <span>Arrival - Departure</span>
@@ -222,7 +242,7 @@ const HomeReservation = () => {
           <PopoverTrigger className="col-span-2 md:col-span-0" asChild>
             <Button
               type="button"
-              className={`w-full md:w-[150px] ${
+              className={`w-full md:w-[150px] h-auto ${
                 children > 0
                   ? "flex space-x-2 items-center border border-black font-semibold py-1 px-2"
                   : "py-2"
