@@ -10,7 +10,7 @@ import { User } from "@supabase/supabase-js";
 export default function ReservationPage({ user }: { user: User }) {
   return (
     <FormLayout user={user}>
-      <section className="grid grid-cols-2 md:px-20 lg:px-40">
+      <section className="grid grid-cols-2 gap-x-2 md:px-20 lg:px-64">
         <ReservationForm user={user} />
         <RoomSummary />
       </section>
