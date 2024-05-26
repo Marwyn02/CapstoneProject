@@ -5,12 +5,18 @@ import { GetServerSidePropsContext } from "next";
 
 import { HotelChoiceForm } from "@/components/form/hotel/HotelChoiceForm";
 import FormLayout from "@/components/layout/FormLayout";
+import Head from "next/head";
 
 export default function HotelForm({ user }: { user: User }) {
   return (
-    <FormLayout user={user}>
-      <HotelChoiceForm user={user} />
-    </FormLayout>
+    <>
+      <Head>
+        <title>Coastal Charm - Reservations</title>
+      </Head>
+      <FormLayout user={user}>
+        <HotelChoiceForm user={user} />
+      </FormLayout>
+    </>
   );
 }
 

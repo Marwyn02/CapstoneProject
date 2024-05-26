@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Popover,
   PopoverContent,
@@ -11,8 +11,18 @@ import {
 } from "@/components/ui/button";
 
 import useStore from "@/store/store";
+import { useRouter } from "next/router";
+
+type searchParamsProps = {
+  checkIn: string;
+  checkOut: string;
+  adults: string;
+  childrens: string;
+  nights: string;
+};
 
 const HotelReservation = () => {
+  const router = useRouter();
   const {
     setDate,
     date,
@@ -23,6 +33,20 @@ const HotelReservation = () => {
     setChildren,
     children,
   } = useStore();
+
+  // Store URL Query to State Management
+  useEffect(() => {
+    try {
+      const { checkIn, checkOut, adults, childrens, nights } =
+        router.query as searchParamsProps;
+      if (checkIn && checkOut) setDate(checkIn as string, checkOut as string);
+      if (adults) setAdult(Number(adults));
+      if (childrens) setChildren(Number(childrens));
+      if (nights) setNightStay(Number(nights));
+    } catch (error) {
+      throw new Error("Error in URL to State");
+    }
+  }, [router.query, setDate, setAdult, setChildren, setNightStay]);
   return (
     <section className="fixed w-full top-5 grid grid-cols-2 justify-center items-center gap-x-2 divide-x px-6 py-1.5 z-40 bg-white translate-y-14 md:top-2 md:py-3 md:px-14 md:40 duration-700">
       {/* Date and night stay display */}
@@ -78,7 +102,22 @@ const HotelReservation = () => {
               size={"icon"}
               onClick={() => {
                 if (adult < 20) {
-                  setAdult(adult + 1);
+                  const updatedAdults = adult + 1;
+                  setAdult(updatedAdults);
+                  router.push(
+                    {
+                      pathname: router.pathname,
+                      query: {
+                        checkIn: date.from,
+                        checkOut: date.to,
+                        adults: updatedAdults,
+                        childrens: children,
+                        nights: nightStay,
+                      },
+                    },
+                    undefined,
+                    { shallow: true }
+                  );
                 }
               }}
             />
@@ -96,7 +135,22 @@ const HotelReservation = () => {
               size={"icon"}
               onClick={() => {
                 if (adult > 1) {
-                  setAdult(adult - 1);
+                  const updatedAdults = adult - 1;
+                  setAdult(updatedAdults);
+                  router.push(
+                    {
+                      pathname: router.pathname,
+                      query: {
+                        checkIn: date.from,
+                        checkOut: date.to,
+                        adults: updatedAdults,
+                        childrens: children,
+                        nights: nightStay,
+                      },
+                    },
+                    undefined,
+                    { shallow: true }
+                  );
                 }
               }}
             />
@@ -108,7 +162,22 @@ const HotelReservation = () => {
               size={"icon"}
               onClick={() => {
                 if (children < 20) {
-                  setChildren(children + 1);
+                  const updatedChildren = children + 1;
+                  setAdult(updatedChildren);
+                  router.push(
+                    {
+                      pathname: router.pathname,
+                      query: {
+                        checkIn: date.from,
+                        checkOut: date.to,
+                        adults: adult,
+                        childrens: updatedChildren,
+                        nights: nightStay,
+                      },
+                    },
+                    undefined,
+                    { shallow: true }
+                  );
                 }
               }}
             />
@@ -125,7 +194,22 @@ const HotelReservation = () => {
               size={"icon"}
               onClick={() => {
                 if (children > 0) {
-                  setChildren(children - 1);
+                  const updatedChildren = children - 1;
+                  setChildren(updatedChildren);
+                  router.push(
+                    {
+                      pathname: router.pathname,
+                      query: {
+                        checkIn: date.from,
+                        checkOut: date.to,
+                        adults: adult,
+                        childrens: updatedChildren,
+                        nights: nightStay,
+                      },
+                    },
+                    undefined,
+                    { shallow: true }
+                  );
                 }
               }}
             />
