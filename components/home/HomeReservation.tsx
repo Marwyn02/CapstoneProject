@@ -95,7 +95,7 @@ const HomeReservation = () => {
   }
 
   useEffect(() => {
-    if (adult > 1 && date.from && date.to && nightStay > 0) {
+    if (adult >= 1 && date.from && date.to && nightStay > 0) {
       setLoading(false);
     } else {
       setLoading(true);
