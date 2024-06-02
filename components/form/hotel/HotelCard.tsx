@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import Router from "next/router";
 import { User } from "@supabase/supabase-js";
@@ -9,6 +9,14 @@ import { Button } from "@/components/ui/button";
 type roomInfoProps = {
   title: string;
   price: number;
+};
+
+type searchParamsProps = {
+  checkIn: string;
+  checkOut: string;
+  adults: string;
+  childrens: string;
+  nights: string;
 };
 
 const HotelCard = ({
@@ -25,14 +33,32 @@ const HotelCard = ({
 
   function choicedRoom(roomName: string, roomPrice: number) {
     try {
+      const { checkIn, checkOut, adults, childrens, nights } =
+        Router.query as searchParamsProps;
       setRoom(roomName);
       setRoomPrice(roomPrice);
 
-      Router.push("/hotel/reservation");
+      Router.push({
+        pathname: "/hotel/enhancements",
+        query: {
+          checkIn,
+          checkOut,
+          adults,
+          childrens,
+          nights,
+          rm: roomName,
+          rmPrice: roomPrice,
+        },
+      });
     } catch (error) {
       console.error(error);
     }
   }
+
+  useEffect(() => {
+    try {
+    } catch (error) {}
+  }, []);
   return (
     <>
       <section className="flex flex-col col-span-4 md:h-auto px-5 py-4 md:py-2 md:px-0">

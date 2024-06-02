@@ -3,13 +3,19 @@ import FormLayout from "@/components/layout/FormLayout";
 import { createClient } from "@/utils/supabase/server-props";
 import type { User } from "@supabase/supabase-js";
 import { GetServerSidePropsContext } from "next";
+import Head from "next/head";
 import React from "react";
 
 const index = ({ user }: { user: User }) => {
   return (
-    <FormLayout user={user}>
-      <EnhancementPage />
-    </FormLayout>
+    <>
+      <Head>
+        <title>Coastal Charm - Enhancement</title>
+      </Head>
+      <FormLayout user={user}>
+        <EnhancementPage />
+      </FormLayout>
+    </>
   );
 };
 

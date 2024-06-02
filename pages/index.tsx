@@ -1,19 +1,20 @@
 import React from "react";
+import { GetServerSidePropsContext } from "next";
+import Head from "next/head";
+
+import { createClient } from "@/utils/supabase/server-props";
 import type { User } from "@supabase/supabase-js";
 
 import MainLayout from "@/components/layout/MainLayout";
-import Head from "next/head";
-import { GetServerSidePropsContext } from "next";
-import { createClient } from "@/utils/supabase/server-props";
 
 export default function Home({ user }: { user: User }) {
   return (
-    <main>
+    <>
       <Head>
         <title>Coastal Charm</title>
       </Head>
       <MainLayout user={user} />
-    </main>
+    </>
   );
 }
 
@@ -32,5 +33,3 @@ export const getServerSideProps = async (
     },
   };
 };
-
-// bg-[#C9D7DD]
