@@ -5,7 +5,6 @@ import MainNavBar from "../nav/main/MainNavBar";
 import HomeReservation from "@/components/home/HomeReservation";
 import HomeLandingPage from "@/components/home/HomeLandingPage";
 import HomeMap from "@/components/home/HomeMap";
-import HomePromotion from "@/components/home/HomePromotion";
 import HomeIntro from "../home/HomeIntro";
 import HomeRooms from "../home/HomeRooms";
 import HomeHotelInformation from "../home/HomeHotelInformation";
@@ -29,9 +28,8 @@ const MainLayout = ({ user }: { user: User }) => {
       <HomeRooms />
       <HomeHotelInformation />
       <HomeHistory />
-      <HomeMap />
-      {/* {user && <HomePromotion />} */}
-      <FooterNav toggleSheet={handleFooterToggle} />
+      <HomeMap user={user} />
+      <FooterNav toggleSheet={handleFooterToggle} user={user} />
     </section>
   );
 };
