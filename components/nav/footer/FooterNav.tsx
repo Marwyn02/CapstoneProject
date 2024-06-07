@@ -1,15 +1,22 @@
 import React from "react";
-import Link from "next/link";
+import { User } from "@supabase/supabase-js";
+
 import HomePromotion from "@/components/home/HomePromotion";
 import { Button } from "@/components/ui/button";
 
-const FooterNav = ({ toggleSheet }: { toggleSheet: () => void }) => {
+const FooterNav = ({
+  user,
+  toggleSheet,
+}: {
+  user: User;
+  toggleSheet: () => void;
+}) => {
   return (
     <footer className="-z-10 fixed bottom-0 left-0 h-auto bg-black w-full text-slate-200 ">
-      <HomePromotion />
+      {!user && <HomePromotion />}
       <section className="py-8 px-8 md:px-52 md:py-10">
         <div className="grid grid-cols-3 gap-x-12">
-          <div className="grid grid-rows-4 grid-flow-col gap-4 text-gray-100 font-thin pt-2">
+          <div className="grid grid-rows-4 grid-flow-col col-start-1 col-span-1 gap-4 text-gray-100 font-thin pt-2">
             <p className="hover:text-white hover:font-light duration-300">
               Home
             </p>
@@ -26,8 +33,8 @@ const FooterNav = ({ toggleSheet }: { toggleSheet: () => void }) => {
               Contact
             </p>
           </div>
-          <div className="space-y-6">
-            <h1 className="text-xl md:text-xl font-thin tracking-[0.25em] font-serif mb-4 md:mb-6">
+          <div className="space-y-6 col-start-2 col-span-1">
+            <h1 className="text-xl md:text-base uppercase tracking-[0.15rem] font-serif mb-4 md:mb-6">
               Coastal Charm
             </h1>
             <div>
@@ -39,28 +46,24 @@ const FooterNav = ({ toggleSheet }: { toggleSheet: () => void }) => {
             </div>
             <p className="text-sm font-light text-gray-400">+63 9192319278</p>
           </div>
-          <div className="space-y-6">
-            <h1 className="text-xl md:text-xl font-thin tracking-[0.25em] font-serif mb-4 md:mb-6">
-              Join us
-            </h1>
-            <div className="space-y-2">
-              <p className="text-sm font-light text-gray-400 mb-6">
-                Be a member in our club
-              </p>
-              <Button
-                onClick={toggleSheet}
-                className="border px-12 py-2 border-gray-200 text-sm font-light hover:bg-gray-200 hover:text-gray-800 hover:font-medium duration-300"
-              >
-                Join
-              </Button>
-              {/* <Link
-                href={"/register"}
-                className="border px-12 py-2 border-gray-200 text-sm font-light hover:bg-gray-200 hover:text-gray-800 hover:font-medium duration-300"
-              >
-                Join
-              </Link> */}
+          {!user && (
+            <div className="col-start-3 col-span-1 space-y-6">
+              <h1 className="text-xl md:text-base uppercase font-serif tracking-widest mb-4 md:mb-6">
+                Join us
+              </h1>
+              <div className="space-y-0">
+                <p className="text-sm font-light text-gray-400 mb-4">
+                  Be a member in our club
+                </p>
+                <Button
+                  onClick={toggleSheet}
+                  className="border bg-transparent px-12 py-2 border-gray-200 text-sm font-light hover:bg-gray-200 hover:text-gray-800 hover:font-medium duration-300"
+                >
+                  Join
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
         <p className="text-sm md:text-xs font-light text-center text-gray-50 pt-3 md:pt-10 mt-6 md:mt-16">
           &copy; Coastal Charm
