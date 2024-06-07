@@ -7,15 +7,15 @@ const Side = () => {
 
   const bookingStyle = `${
     path === "/user/booking"
-      ? "bg-gray-500 px-5 py-2 text-gray-100 text-sm rounded-md"
-      : "bg-gray-100 px-5 py-2 text-sm rounded-md"
-  } hover:bg-gray-400 hover:text-gray-100 duration-300`;
+      ? "bg-gray-800 px-5 py-2 text-gray-100 text-sm rounded-md"
+      : "bg-gray-100 px-5 py-2 text-sm rounded-md hover:bg-gray-400 hover:text-gray-100 duration-300"
+  }`;
 
   const profileStyle = `${
     path === "/user/profile"
-      ? "bg-gray-500 px-5 py-2 text-gray-100 text-sm rounded-md"
-      : "bg-gray-100 px-5 py-2 text-sm rounded-md"
-  } hover:bg-gray-400 hover:text-gray-100 duration-300`;
+      ? "bg-gray-800 px-5 py-2 text-gray-100 text-sm rounded-md"
+      : "bg-gray-100 px-5 py-2 text-sm rounded-md hover:bg-gray-400 hover:text-gray-100 duration-300"
+  }`;
 
   return (
     <nav className="pt-48 pl-16">
