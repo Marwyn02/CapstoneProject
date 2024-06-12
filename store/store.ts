@@ -53,3 +53,13 @@ const useStore = create<AppState & AppActions>((set) => ({
 }));
 
 export default useStore;
+
+interface authSide {
+  toggleActionState: () => void;
+  setToggleAction: (toggleActionState: () => void) => void;
+}
+
+export const openSideAuth = create<authSide>((set) => ({
+  toggleActionState: () => {},
+  setToggleAction: (toggleActionState) => set({ toggleActionState }),
+}));
