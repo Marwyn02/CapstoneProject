@@ -82,7 +82,9 @@ const Reservations = ({ reservations }: { reservations: Reservation }) => {
               </tr>
             ))
           ) : (
-            <p className="py-5">No reservations</p>
+            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <th className="py-5">No reservations</th>
+            </tr>
           )}
         </tbody>
       </table>

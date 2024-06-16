@@ -54,7 +54,9 @@ const Guests = ({ guests }: { guests: Guest }) => {
               </tr>
             ))
           ) : (
-            <p className="py-5">No guests</p>
+            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <th className="py-5">No guests</th>
+            </tr>
           )}
         </tbody>
       </table>
