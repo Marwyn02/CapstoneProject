@@ -274,7 +274,7 @@ const HomeReservation = () => {
               <GuestAddCountButton
                 size={"icon"}
                 onClick={() => {
-                  if (adult < 20) {
+                  if (adult < 9) {
                     setAdult(adult + 1);
                   }
                 }}
@@ -308,7 +308,7 @@ const HomeReservation = () => {
               <GuestAddCountButton
                 size={"icon"}
                 onClick={() => {
-                  if (children < 20) {
+                  if (children < 6) {
                     setChildren(children + 1);
                   }
                 }}

@@ -3,14 +3,14 @@ import { User } from "@supabase/supabase-js";
 
 import HomePromotion from "@/components/home/HomePromotion";
 import { Button } from "@/components/ui/button";
+import { openSideAuth } from "@/store/store";
 
-const FooterNav = ({
-  user,
-  toggleSheet,
-}: {
-  user: User;
-  toggleSheet: () => void;
-}) => {
+const FooterNav = ({ user }: { user: User }) => {
+  const toggleActionState = openSideAuth((state) => state.toggleActionState);
+
+  const handleToggleSheet = () => {
+    toggleActionState();
+  };
   return (
     <footer className="-z-10 fixed bottom-0 left-0 h-auto bg-black w-full text-slate-200 ">
       {!user && <HomePromotion />}
@@ -56,7 +56,7 @@ const FooterNav = ({
                   Be a member in our club
                 </p>
                 <Button
-                  onClick={toggleSheet}
+                  onClick={handleToggleSheet}
                   className="border bg-transparent px-12 py-2 border-gray-200 text-sm font-light hover:bg-gray-200 hover:text-gray-800 hover:font-medium duration-300"
                 >
                   Join

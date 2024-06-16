@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Router from "next/router";
 import Link from "next/link";
 
@@ -7,6 +7,7 @@ import { createClient } from "@/utils/supabase/component";
 import type { User } from "@supabase/supabase-js";
 
 import { FaGoogle } from "react-icons/fa";
+import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -21,19 +22,16 @@ import {
 
 import AuthLogin from "./authenticators/AuthLogin";
 import AuthSignUp from "./authenticators/AuthSignUp";
+import { openSideAuth } from "@/store/store";
 
-type AuthNavBarProps = {
-  user: User;
-};
-
-export const AuthNavBar = forwardRef<
-  { toggleAction: () => void },
-  AuthNavBarProps
->(({ user }, ref) => {
+export const AuthNavBar = ({ user }: { user: User }) => {
   const supabase = createClient();
-  useImperativeHandle(ref, () => ({
-    toggleAction,
-  }));
+  const setToggleAction = openSideAuth((state) => state.setToggleAction);
+
+  useEffect(() => {
+    setToggleAction(toggleAction);
+  }, [setToggleAction]);
+
   const [signIn, setSignIn] = useState<boolean>(true);
 
   // Nav Sheet State
@@ -80,6 +78,7 @@ export const AuthNavBar = forwardRef<
   const toggleSheet = () => {
     setOpen(false);
   };
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
@@ -88,31 +87,62 @@ export const AuthNavBar = forwardRef<
           className="flex justify-end items-center bg-transparent border-0 hover:bg-transparent hover:opacity-60 hover:border-0 duration-300 focus:outline-none"
         >
           {user ? (
-            <p className="font-medium text-start text-[#2A3242] text-sm duration-300">
-              {user.user_metadata.firstname + " " + user.user_metadata.lastname}
-            </p>
+            <div>
+              <p className="font-medium font-serif text-start text-[#2A3242] duration-300">
+                {user?.user_metadata?.firstname +
+                  " " +
+                  user?.user_metadata?.lastname}
+              </p>
+              <p className="text-xs text-gray-700 font-serif text-start">
+                Status: Classic
+              </p>
+            </div>
           ) : (
             <div className="md:grid md:grid-cols-1 text-start hidden text-[#2A3242] text-sm duration-300">
-              <p>Sign In</p>
-              <p>Create Account</p>
+              <p className="font-serif">Sign In</p>
+              <p className="text-xs font-serif">Create Account</p>
             </div>
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent side={"right"} className="px-2">
+      <SheetContent
+        side={"right"}
+        className="flex flex-col justify-between space-y-10 px-0"
+      >
         <SheetHeader>
-          <SheetTitle className="flex items-center text-[#2A3242] tracking-wider font-extralight border-b px-5 pt-10 pb-14 text-4xl font-serif">
-            Your Account
+          <SheetTitle className="text-[#2A3242] tracking-wider font-extralight border-b border-gray-300 px-5 pt-10 pb-8 text-4xl font-serif space-y-8">
+            <h1>Your Account</h1>
+            {user && (
+              <div>
+                <p className="text-[#2A3242] tracking-widest font-light uppercase text-lg">
+                  Mr.
+                  {user?.user_metadata?.firstname +
+                    " " +
+                    user?.user_metadata?.lastname}
+                </p>
+                <p className="text-[10px] font-sans font-normal tracking-wider uppercase -mt-3 text-gray-600">
+                  Your membership status: Classic
+                </p>
+              </div>
+            )}
           </SheetTitle>
           {user ? (
-            <section className="grid grid-cols-1 space-y-6 px-5">
-              <Link href={"/"}>Your bookings</Link>
-              <Link href={"/"}>Your Account</Link>
+            <section className="grid grid-cols-1 space-y-12 px-8">
+              <div className="grid space-y-10">
+                <h2 className="font-medium text-sm text-black uppercase tracking-widest">
+                  Your Account
+                </h2>
+                <ThemedLink src="/user/profile" title="Profile" />
+              </div>
+              <div className="grid space-y-8 border-t-[1px] border-gray-300 pt-12">
+                <ThemedLink src="/user/booking" title="Bookings" />
+                <ThemedLink src="/club" title="Coastal Charm Club" />
+              </div>
             </section>
           ) : (
             <>
               {/* Auth selection */}
-              <section className="grid grid-cols-2 px-5">
+              <section className="grid grid-cols-2 px-8">
                 <Button
                   type="button"
                   onClick={() => setSignIn(true)}
@@ -164,9 +194,13 @@ export const AuthNavBar = forwardRef<
           )}
         </SheetHeader>
 
-        <SheetFooter>
+        <SheetFooter className="px-8">
           {user && (
-            <Button type="button" onClick={signOut}>
+            <Button
+              type="button"
+              className="w-full uppercase tracking-widest text-xs"
+              onClick={signOut}
+            >
               Sign out
             </Button>
           )}
@@ -174,4 +208,16 @@ export const AuthNavBar = forwardRef<
       </SheetContent>
     </Sheet>
   );
-});
+};
+
+export const ThemedLink = ({ src, title }: { src: string; title: string }) => {
+  return (
+    <Link
+      href={src}
+      className="flex justify-between items-center tracking-widest text-xs text-gray-600 uppercase hover:text-black hover:underline underline-offset-2 duration-300"
+    >
+      <p>{title}</p>
+      <ChevronRight size={20} />
+    </Link>
+  );
+};

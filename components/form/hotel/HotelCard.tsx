@@ -1,14 +1,24 @@
-import React, { useEffect } from "react";
+/* eslint-disable react/no-unescaped-entities */
+import React from "react";
 import Link from "next/link";
 import Router from "next/router";
 import { User } from "@supabase/supabase-js";
 
 import useStore from "@/store/store";
 import { Button } from "@/components/ui/button";
+import AmenitiesModal from "./AmenitiesModal";
 
-type roomInfoProps = {
-  title: string;
+type Rooms = {
+  id: string;
+  image: string;
+  name: string;
+  no_available: number;
+  no_guest: number;
   price: number;
+  created_at: string;
+  amenities: {
+    amenities: string[];
+  };
 };
 
 type searchParamsProps = {
@@ -19,16 +29,7 @@ type searchParamsProps = {
   nights: string;
 };
 
-const HotelCard = ({
-  user,
-  info,
-  onOpenDetails,
-}: {
-  user: User;
-  info: roomInfoProps;
-  openDetails: any;
-  onOpenDetails: any;
-}) => {
+const HotelCard = ({ user, info }: { user: User; info: Rooms }) => {
   const { setRoom, setRoomPrice } = useStore();
 
   function choicedRoom(roomName: string, roomPrice: number) {
@@ -54,17 +55,12 @@ const HotelCard = ({
       console.error(error);
     }
   }
-
-  useEffect(() => {
-    try {
-    } catch (error) {}
-  }, []);
   return (
     <>
       <section className="flex flex-col col-span-4 md:h-auto px-5 py-4 md:py-2 md:px-0">
         <div className="flex justify-between items-center border-b border-black pb-5">
           <h3 className="text-lg md:text-2xl font-semibold text-gray-700 mb-2 md:mb-0">
-            {info.title}
+            {info.name}
           </h3>
 
           <p className="text-xl font-semibold md:text-xl md:font-medium text-gray-800">
@@ -87,14 +83,8 @@ const HotelCard = ({
           </div>
         </div>
 
-        <div>
-          <button
-            className="text-xs font-thin underline"
-            onClick={onOpenDetails}
-          >
-            Details and Conditions
-          </button>
-        </div>
+        {/* Amenities Modal */}
+        <AmenitiesModal info={info} />
 
         {user ? (
           <div className="text-sm bg-yellow-50 rounded-md p-4 md:mt-2 md:px-5 md:py-5">
@@ -125,10 +115,7 @@ const HotelCard = ({
 
         <div className="grid grid-cols-7 items-end">
           <div className="col-span-2">
-            <p
-              className="text-center font-semibold md:text-sm h-10 px-4 py-2 md:font-medium      whitespace-nowrap    border border-slate-800 bg-slate-800 text-slate-100 dark:border-slate-800 dark:bg-slate-950 dark:hover:bg-slate-800 dark:hover:text-slate-50
-"
-            >
+            <p className="text-center font-semibold md:text-sm h-10 px-4 py-2 md:font-medium whitespace-nowrap border border-slate-800 bg-slate-800 text-slate-100 dark:border-slate-800 dark:bg-slate-950 dark:hover:bg-slate-800 dark:hover:text-slate-50">
               PHP {info.price}
               <span className="text-xs font-thin font-serif text-gray-400 italic">
                 / night
@@ -139,7 +126,7 @@ const HotelCard = ({
             type="button"
             variant={"outline"}
             className="col-span-5 mt-5 border-slate-800"
-            onClick={() => choicedRoom(info.title, info.price)}
+            onClick={() => choicedRoom(info.name, info.price)}
           >
             Choose
           </Button>
