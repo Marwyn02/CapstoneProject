@@ -1,8 +1,10 @@
 import React from "react";
+import type { Guest } from "@/types/types";
 
-const Guests = ({ guests }: any) => {
+const Guests = ({ guests }: { guests: Guest }) => {
   return (
-    <section className="relative overflow-x-auto">
+    <section className="relative overflow-x-auto col-start-2 col-span-full space-y-4">
+      <h2 className="uppercase font-semibold text-xs mt-5 mb-2">Guests</h2>
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -25,31 +27,35 @@ const Guests = ({ guests }: any) => {
           </tr>
         </thead>
         <tbody>
-          {guests.map((guest: any, i: number) => (
-            <tr
-              key={i}
-              className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-            >
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          {guests.length >= 1 ? (
+            guests.map((guest: Guest, i: number) => (
+              <tr
+                key={i}
+                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
               >
-                {i + 1}
-              </th>
-              <td
-                scope="row"
-                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-              >
-                {guest.firstname + " " + guest.lastname}
-              </td>
-              <td className="px-6 py-4">{guest.email}</td>
-              <td className="px-6 py-4 text-[#808080]">Classic</td>
-              <td className="px-6 py-4">
-                {new Date(guest.created_at).toLocaleDateString()}
-              </td>
-              {/* <td className="px-6 py-4">Edit</td> */}
-            </tr>
-          ))}
+                <th
+                  scope="row"
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {i + 1}
+                </th>
+                <td
+                  scope="row"
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {guest.firstname + " " + guest.lastname}
+                </td>
+                <td className="px-6 py-4">{guest.email}</td>
+                <td className="px-6 py-4 text-[#808080]">Classic</td>
+                <td className="px-6 py-4">
+                  {new Date(guest.created_at).toLocaleDateString()}
+                </td>
+                {/* <td className="px-6 py-4">Edit</td> */}
+              </tr>
+            ))
+          ) : (
+            <p className="py-5">No guests</p>
+          )}
         </tbody>
       </table>
     </section>
