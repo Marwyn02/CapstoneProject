@@ -1,6 +1,8 @@
 import React from "react";
 import type { Reservation } from "@/types/types";
 
+import { DeleteConfirmationModal } from "../ui/modal";
+
 const Reservations = ({ reservations }: { reservations: Reservation }) => {
   return (
     <section className="relative overflow-x-auto col-start-2 col-span-full space-y-4">
@@ -78,6 +80,13 @@ const Reservations = ({ reservations }: { reservations: Reservation }) => {
                       hour12: true,
                     }
                   )}
+                </td>
+                <td className="px-6 py-4">
+                  <DeleteConfirmationModal
+                    rowId={i}
+                    id={reservation.id}
+                    title="Reservation"
+                  />
                 </td>
               </tr>
             ))
