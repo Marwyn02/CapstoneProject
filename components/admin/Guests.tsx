@@ -1,6 +1,8 @@
 import React from "react";
 import type { Guest } from "@/types/types";
 
+import { DeleteConfirmationModal } from "../ui/modal";
+
 const Guests = ({ guests }: { guests: Guest }) => {
   return (
     <section className="relative overflow-x-auto col-start-2 col-span-full space-y-4">
@@ -31,7 +33,7 @@ const Guests = ({ guests }: { guests: Guest }) => {
             guests.map((guest: Guest, i: number) => (
               <tr
                 key={i}
-                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 <th
                   scope="row"
@@ -50,7 +52,13 @@ const Guests = ({ guests }: { guests: Guest }) => {
                 <td className="px-6 py-4">
                   {new Date(guest.created_at).toLocaleDateString()}
                 </td>
-                {/* <td className="px-6 py-4">Edit</td> */}
+                <td className="px-6 py-4">
+                  <DeleteConfirmationModal
+                    rowId={i}
+                    id={guest.id}
+                    title="Guest"
+                  />
+                </td>
               </tr>
             ))
           ) : (
