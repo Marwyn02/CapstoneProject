@@ -1,11 +1,12 @@
-import React from "react";
-import { ReservationForm } from "@/components/form/ReservationForm";
-import RoomSummary from "@/components/form/invoice/RoomSummary";
-import FormLayout from "@/components/layout/FormLayout";
-
-import { createClient } from "@/utils/supabase/server-props";
+import React, { Suspense } from "react";
 import { GetServerSidePropsContext } from "next";
+import Head from "next/head";
 import type { User } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/server-props";
+
+import { ReservationForm } from "@/components/form/reservation/ReservationForm";
+import Summary from "@/components/form/reservation/Summary";
+import FormLayout from "@/components/layout/FormLayout";
 
 type Rooms = {
   id: string;
@@ -28,36 +29,36 @@ export default function ReservationPage({
   rooms: Rooms;
 }) {
   return (
-    <FormLayout user={user}>
-      <section className="grid grid-cols-2 gap-x-2 md:px-20 lg:px-64">
-        <ReservationForm user={user} />
-        <RoomSummary rooms={rooms} />
-      </section>
-    </FormLayout>
+    <>
+      <Head>
+        <title>Coastal Charm - Reservations</title>
+      </Head>
+      <FormLayout user={user}>
+        <Suspense fallback={<p>Loading...</p>}>
+          <section className="grid grid-cols-8 md:px-8 lg:px-10">
+            <ReservationForm user={user} rooms={rooms} />
+            <Summary rooms={rooms} />
+          </section>
+        </Suspense>
+      </FormLayout>
+    </>
   );
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const supabase = createClient(context);
-  const { rm } = context.query;
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  try {
+    const supabase = createClient(context);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  const { data: rooms, error } = await supabase
-    .from("rooms")
-    .select("*")
-    .eq("name", rm);
-
-  const [targetRoom]: any = rooms;
-  const room = { ...targetRoom };
-
-  if (error) {
-    console.error(error, "Error");
+    return {
+      props: { user },
+    };
+  } catch (error) {
+    console.error("Error in Reservation Index: ", error);
   }
-
-  return {
-    props: { user, rooms: room },
-  };
-}
+};
