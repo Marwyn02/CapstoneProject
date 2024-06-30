@@ -33,7 +33,7 @@ export const getServerSideProps = async (
 
     return {
       props: {
-        user: user,
+        user,
       },
     };
   } catch (error) {
