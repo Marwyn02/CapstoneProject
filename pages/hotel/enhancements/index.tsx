@@ -1,11 +1,11 @@
 import React from "react";
-import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import type { User } from "@supabase/supabase-js";
-import { createClient } from "@/utils/supabase/server-props";
 
 import FormLayout from "@/components/layout/FormLayout";
 import EnhancementPage from "@/components/form/enhances/EnhancementPage";
+import { User } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/server-props";
+import { GetServerSidePropsContext } from "next";
 
 const index = ({ user }: { user: User }) => {
   return (
