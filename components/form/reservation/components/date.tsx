@@ -1,13 +1,11 @@
 import React from "react";
-import { Calendar, MoonStar } from "lucide-react";
+import { CalendarFold, Calendar, MoonStar, DoorOpen } from "lucide-react";
 
 type Date = {
   date: {
     to: string;
     from: string;
   };
-  checkIn?: string | undefined;
-  checkOut?: string | undefined;
 };
 
 type Night = {
@@ -17,20 +15,17 @@ type Night = {
     from: string;
   };
   nightStay: number; // From state
-  night: string | null; // From Url
 };
 
-export const CheckInDate = ({ date, checkIn }: Date) => {
+export const CheckInDate = ({ date }: Date) => {
   return (
     <div className="flex items-center">
-      <Calendar className="h-4 w-4 text-gray-500 mr-2" />
+      <CalendarFold className="h-4 w-4 text-gray-500 mr-2" />
       <div>
         <p className="font-medium text-xs text-gray-500">Check-in</p>
         <p className="text-sm text-gray-700 font-medium">
           {date.from !== undefined && date.from !== ""
             ? new Date(date.from).toDateString()
-            : checkIn
-            ? new Date(checkIn).toDateString()
             : null}
         </p>
       </div>
@@ -38,7 +33,7 @@ export const CheckInDate = ({ date, checkIn }: Date) => {
   );
 };
 
-export const CheckOutDate = ({ date, checkOut }: Date) => {
+export const CheckOutDate = ({ date }: Date) => {
   return (
     <div className="flex items-center">
       <Calendar className="h-4 w-4 text-gray-500 mr-2" />
@@ -47,8 +42,6 @@ export const CheckOutDate = ({ date, checkOut }: Date) => {
         <p className="text-sm text-gray-700 font-medium">
           {date.to !== undefined && date.to !== ""
             ? new Date(date.to).toDateString()
-            : checkOut
-            ? new Date(checkOut).toDateString()
             : null}
         </p>
       </div>
@@ -56,7 +49,7 @@ export const CheckOutDate = ({ date, checkOut }: Date) => {
   );
 };
 
-export const NightStayCount = ({ date, nightStay, night }: Night) => {
+export const NightStayCount = ({ date, nightStay }: Night) => {
   return (
     <div className="flex items-center">
       <MoonStar className="h-4 w-4 text-gray-500 mr-2" />
@@ -67,10 +60,22 @@ export const NightStayCount = ({ date, nightStay, night }: Night) => {
             ? `${nightStay} nights`
             : nightStay <= 1
             ? `${nightStay} night`
-            : Number(night) > 1
-            ? `${night} nights`
-            : `${night} night`}
+            : null}
         </p>
+      </div>
+    </div>
+  );
+};
+
+export const RoomCount = ({ room }: { room: number }) => {
+  return (
+    <div className="flex items-center">
+      <DoorOpen className="h-4 w-4 text-gray-500 mr-2" />
+      <div>
+        <p className="font-medium text-xs text-gray-500">
+          {room && room > 1 ? `Rooms` : room <= 1 ? `Room` : null}
+        </p>
+        <p className="text-sm text-gray-700 font-medium">{room}</p>
       </div>
     </div>
   );
