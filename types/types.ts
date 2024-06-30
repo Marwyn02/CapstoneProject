@@ -1,4 +1,5 @@
 export interface Guest {
+  filter: any;
   length: number;
   map(
     arg0: (guest: Guest, i: number) => import("react").JSX.Element
@@ -24,6 +25,28 @@ export interface Reservation {
   adult: string;
   children: string;
   payment: string;
+  guests: {
+    map(
+      arg0: (guest: any, i: number) => import("react").JSX.Element
+    ): import("react").ReactNode;
+    adults: number;
+    children: number;
+    price: number;
+    room: string;
+  };
+  services: {
+    laundry: {
+      choice: string;
+      price: number;
+      request: string;
+    };
+    transport: {
+      choice: string;
+      from: string;
+      price: number;
+      trip: string;
+    };
+  };
   created_at: string;
   room_id: string;
   payment_term: string;
@@ -32,3 +55,16 @@ export interface Reservation {
   balance_remaining: number;
 }
 [];
+
+export type Room = {
+  id: string;
+  name: string;
+  image: string;
+  amenities: { amenities: string[] };
+  no_available: number;
+  price: number;
+  no_adult: number;
+  no_children: number;
+  no_person: number;
+  created_at: string;
+}[];
