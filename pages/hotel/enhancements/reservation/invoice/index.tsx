@@ -3,7 +3,7 @@ import RoomInvoice from "@/components/form/invoice/RoomInvoice";
 
 import { GetServerSidePropsContext } from "next";
 import { createClient } from "@/utils/supabase/server-props";
-import { User } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 import FormLayout from "@/components/layout/FormLayout";
 
 const ReservationInvoicePage = ({ user }: { user: User }) => {

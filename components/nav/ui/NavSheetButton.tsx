@@ -10,19 +10,24 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { ThemedLink } from "../main/AuthNavbar";
 
 const navigations = [
   {
     id: 1,
     title: "Home",
+    link: "/",
   },
   {
     id: 2,
     title: "The Rooms",
+    link: "/",
   },
   {
     id: 3,
     title: "The Hotel",
+    link: "/",
   },
 ];
 
@@ -30,7 +35,7 @@ export function NavSheetButton() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <button
+        <Button
           type="button"
           className="flex items-center bg-transparent border-0 hover:bg-transparent hover:opacity-60 hover:border-0 duration-300 focus:outline-none"
         >
@@ -38,11 +43,11 @@ export function NavSheetButton() {
           <p className="hidden md:block indent-2 text-[#2A3242] text-sm font-light tracking-widest duration-300">
             MENU
           </p>
-        </button>
+        </Button>
       </SheetTrigger>
       <SheetContent side={"left"} className="px-0">
         <SheetHeader>
-          <SheetTitle className="flex items-center text-[#2A3242] tracking-wider font-extralight border-b px-5">
+          <SheetTitle className="flex items-center text-[#2A3242] tracking-wider font-extralight border-b px-5 pb-5 mb-8">
             <Image
               src="/MainLogo-removed.png"
               alt="Logo"
@@ -50,13 +55,11 @@ export function NavSheetButton() {
               width={1000}
               className="h-20 w-20"
             />
-            <p className="font-serif font-thin text-2xl">Coastal Charm</p>
+            <p className="font-serif font-thin text-3xl">Coastal Charm</p>
           </SheetTitle>
-          <section className="grid grid-row space-y-4 text-lg text-start px-10 text-slate-500 dark:text-slate-400">
-            {navigations.map((n, index) => (
-              <p key={n.id} className="hover:underline">
-                {n.title}
-              </p>
+          <section className="grid grid-row space-y-8 text-lg text-start px-10 text-slate-500 dark:text-slate-400">
+            {navigations.map((n) => (
+              <ThemedLink key={n.id} src={n.link} title={n.title} />
             ))}
           </section>
         </SheetHeader>
