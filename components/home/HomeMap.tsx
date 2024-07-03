@@ -12,7 +12,7 @@ const HomeMap: React.FC<UserProps> = ({ user }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<Map | null>(null);
 
-  const mapStyle = `mx-52 mt-14 pb-5 space-y-6 ${
+  const mapStyle = `lg:mx-52 lg:mt-14 pb-14 lg:pb-5 space-y-6 ${
     !user ? "mb-[560px] lg:mb-[580px]" : "mb-[400px] lg:mb-[400px]"
   } `;
 
@@ -36,13 +36,17 @@ const HomeMap: React.FC<UserProps> = ({ user }) => {
 
   return (
     <div className={mapStyle}>
-      <div className="space-y-5 grid place-content-end p-2">
+      <div className="space-y-5 grid place-content-end p-2 px-5">
         <h2 className="font-semibold text-end font-serif text-3xl md:text-3xl mb-4 md:mb-3.5 text-gray-500">
           Discover Your <span className="text-black">Staycation Haven</span>
         </h2>
-        <hr className="border[1px] border-zinc-200 w-10 md:w-14 md:-mr-6 my-8 md:my-10 rotate-90 grid place-self-end" />
+        <hr className="border[1px] border-zinc-200 w-10 md:w-14 -mr-5 md:-mr-6 my-8 md:my-10 rotate-90 grid place-self-end" />
       </div>
-      <div id="map" ref={mapContainerRef} className="w-full h-[500px]"></div>
+      <div
+        id="map"
+        ref={mapContainerRef}
+        className="w-full h-[250px] lg:h-[500px]"
+      ></div>
     </div>
   );
 };

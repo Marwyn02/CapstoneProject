@@ -1,5 +1,5 @@
 import React from "react";
-import { User } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 
 import HomePromotion from "@/components/home/HomePromotion";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ const FooterNav = ({ user }: { user: User }) => {
     toggleActionState();
   };
   return (
-    <footer className="-z-10 fixed bottom-0 left-0 h-auto bg-black w-full text-slate-200 ">
+    <footer className="-z-10 fixed bottom-0 left-0 h-auto bg-black w-full text-slate-200">
       {!user && <HomePromotion />}
       <section className="py-8 px-8 md:px-52 md:py-10">
         <div className="grid grid-cols-3 gap-x-12">
