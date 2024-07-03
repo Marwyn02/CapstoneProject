@@ -20,7 +20,7 @@ const HomeHistory = () => {
             </p>
           </div>
           <hr className="border[1px] border-zinc-200 w-10 md:w-16 md:-ml-3 my-8 md:my-10 rotate-90" />
-          <p className="text-end text-sm font-thin leading-6 px-5">
+          <p className="text-end text-base font-thin leading-6 px-5">
             Situated on the breathtaking coast of the Philippines lies a hidden
             gem known as Coastal Charm. This charming sanctuary was established
             by the esteemed Solis family, a lineage known for their passion for
@@ -51,12 +51,12 @@ const HomeHistory = () => {
           />
         </div>
         <div className="flex flex-col justify-between items-start px-5 my-14 order-1 md:order-2 md:px-0 md:my-0 md:pr-80">
-          <p className="text-start text-sm font-thin leading-6 md:mt-8">
+          <p className="text-start text-base font-thin leading-6 md:mt-8">
             The Solis family invested not only their resources but also their
             passion into building Coastal Charm. As the years passed, the Solis
             family's commitment never wavered.
           </p>
-          <p className="text-start text-sm font-thin leading-6 md:mt-8">
+          <p className="text-start text-base font-thin leading-6 md:mt-8">
             They continued to innovate, adding new amenities and activities
             while staying true to their original vision of providing a haven
             where guests could unwind and escape the stresses of everyday life.
