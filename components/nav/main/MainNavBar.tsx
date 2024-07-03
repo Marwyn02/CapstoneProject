@@ -1,12 +1,12 @@
 /* eslint-disable react/display-name */
 import React, { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
+import Router from "next/router";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 import { NavSheetButton } from "../ui/NavSheetButton";
 import { AuthNavBar } from "./AuthNavbar";
-import { usePathname } from "next/navigation";
-import Router from "next/router";
 
 const MainNavBar = ({ user }: { user: User }) => {
   const path = usePathname();
@@ -15,13 +15,14 @@ const MainNavBar = ({ user }: { user: User }) => {
   // Coastal Charm logo
   const CoastalCharmLogo = () => {
     return (
-      <div className="flex flex-row justify-start md:justify-center items-center text-[#2A3242] font-extralight tracking-wider font-serif cursor-default md:order-2">
-        <h1 className="hidden md:block">Coastal</h1>
+      <div className="flex flex-row justify-start md:justify-center items-center text-[#2A3242] font-medium tracking-wider font-serif cursor-default md:order-2">
+        <h1 className="hidden md:block text-lg">Coastal</h1>
         <Image
           src="/MainLogo-removed.png"
           alt="Logo"
           height={1000}
           width={1000}
+          priority
           className={
             path.length > 2
               ? "h-16 w-16 md:h-[70px] md:w-[70px] cursor-pointer"
@@ -31,10 +32,23 @@ const MainNavBar = ({ user }: { user: User }) => {
           }
           onClick={() => Router.push("/")}
         />
-        <h1 className="hidden md:block">Charm</h1>
+        <h1 className="hidden md:block text-lg">Charm</h1>
       </div>
     );
   };
+
+  // Fetch User details
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     const res = await fetch("/api/auth/getUser");
+
+  //     if (res) {
+  //       const { user } = await res.json();
+  //       setUser(user);
+  //     }
+  //   };
+  //   fetchUser();
+  // }, []);
 
   // Scroll changes
   useEffect(() => {
