@@ -15,8 +15,8 @@ const HomeHistory = () => {
               width={500}
               className="h-[70px] w-[70px] mx-auto -pl-5 md:-ml-9"
             />
-            <p className="text-xs text-zinc-500 italic font-serif font-thin">
-              Coastal Charm's Memory
+            <p className="text-3xl text-zinc-500 font-serif font-semibold">
+              Coastal Charm's <span className="text-black">Memory</span>
             </p>
           </div>
           <hr className="border[1px] border-zinc-200 w-10 md:w-16 md:-ml-3 my-8 md:my-10 rotate-90" />
