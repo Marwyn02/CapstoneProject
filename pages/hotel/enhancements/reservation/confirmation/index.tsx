@@ -14,7 +14,7 @@ const Confirmation = ({ reservation }: { reservation: Reservation }) => {
         <title>Coastal Charm - Confirmation</title>
       </Head>
       <FormLayout>
-        <ConfirmationPage />
+        <ConfirmationPage reservation={reservation} />
       </FormLayout>
     </>
   );
