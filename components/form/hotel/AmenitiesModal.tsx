@@ -26,7 +26,7 @@ type Rooms = {
 const AmenitiesModal = ({ info }: { info: Rooms }) => {
   return (
     <Dialog>
-      <DialogTrigger className="text-start text-xs font-thin underline">
+      <DialogTrigger className="text-start text-xs font-thin underline my-3">
         Full Details and Conditions
       </DialogTrigger>
       <DialogContent>
